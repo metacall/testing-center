@@ -10,6 +10,7 @@ import os
 import sys
 import subprocess
 
+
 ############################################################################################################
 # 0. Gets the operating system.
 def getOperatingSystem():
@@ -39,16 +40,12 @@ def downloadAndInstallMetacall(operatingSystem):
         return False
 
 
-
 # 2. Clones an example repo.
 def cloneExampleRepo(repoName):
     # Check if the repo is already cloned.
     if os.path.isdir(repoName):
         print('Repo already cloned.')
         return
-    # Create a new directory for the repo and download it into it.
-    # subprocess.call(['wget', '--no-check-certificate', 'https://github.com/metacall/' + repoName + '/tarball/master', '-O', repoName + '.tar.gz'])
-    # subprocess.call(['tar', '-xf', '--strip-components=1', '-C', repoName, repoName + '.tar.gz'])
     # CLone the repo using git
     try:
         subprocess.call([
@@ -60,31 +57,32 @@ def cloneExampleRepo(repoName):
 
 
 # 3. Run the example repo.
-def runExampleRepo(repoName):
-    entryPoint = 'main.js'
-    # Check if the run command ran successfully.
-    try:
-        subprocess.call(['cd ', repoName])
-        subprocess.call(['metacall ', './' + entryPoint])
-        return True
-    except Exception as e:
-        print(e)
-        return False
+# def runExampleRepo(repoName):
+#     entryPoint = 'main.js'
+#     # Check if the run command ran successfully.
+#     try:
+#         subprocess.call(['cd ', repoName])
+#         subprocess.call(['metacall ', './' + entryPoint])
+#         return True
+#     except Exception as e:
+#         print(e)
+#         return False
+
+# 3. Test the example repo.
+
 
 
 if __name__ == '__main__':
     # 0. Gets the operating system.
     operatingSystem = getOperatingSystem()
-    print('Operating system: ' + operatingSystem)
     # 1. Downloads and installs metacall.
-    if not downloadAndInstallMetacall(operatingSystem):
-        print('Error: Could not install metacall.')
-        sys.exit(1)
-    print('Metacall installed successfully.')
+    # if not downloadAndInstallMetacall(operatingSystem):
+    #     print('Error: Could not install metacall.')
+    #     sys.exit(1)
     # 2. Clones an example repo.
-    repoName = 'examples'
-    cloneExampleRepo(repoName)
-    print('Example repo cloned successfully.')
+    # repoName = 'examples'
+    # cloneExampleRepo(repoName)
+    # print('Example repo cloned successfully.')
     # 3. Run the example repo.
     if not runExampleRepo(repoName):
         print('Error: Could not run example repo.')
