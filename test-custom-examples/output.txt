@@ -1,0 +1,25 @@
+Welcome to Tijuana, tequila, sexo & marijuana.
+λ Script (src/cli-test-null-undefined.js) loaded correctly
+λ runtime ext {
+	module plugin_extension { 
+		function plugin_load_from_path(arg0, arg1)
+	}
+	module gnu/store/szllrsimcnm8r1iiampsikhnnpk3c4zd-metacall-0.6.2/lib/plugins/cli/cli_core_plugin/cli_core_plugin { 
+		function inspect()
+		function call(arg0)
+		function clear(arg0, arg1)
+		function await(arg0)
+		function eval(arg0, arg1)
+		function load(arg0, arg1)
+	}
+}
+runtime node {
+	module src/cli-test-null-undefined.js { 
+		function test_null_and_undefined(name)
+	}
+}
+runtime __metacall_host__
+λ [32mError[0m: Invalid parsing of document ([undefined]) in RapidJSON implementation: Invalid value. at 1
+[32mError[0m: Invalid serial implementation handle deserialization
+(null)
+λ Exiting ...
