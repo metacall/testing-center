@@ -13,25 +13,29 @@ def getOptions(fileName):
 def getMetacallProcess():
     # We use the `subprocess.Popen` function to start the "metacall" command as a child process. 
     # We specify `stdin=subprocess.PIPE` to redirect its standard input stream to our Python program. 
-    p = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # Run the "metacall" command and get a handle to its standard input stream
-    return p
+    process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # Run the "metacall" command and get a handle to its standard input stream
+    return process
 
-def passOptionsToMetacall(p, options):
+def passOptionsToMetacall(process, options, saveOutput=False):
     # We send some input values to the standard input stream using the `write` method of the `stdin` object. 
     # Note that we need to encode the string as bytes before sending it.
     for option in options:
-        p.stdin.write(option.encode('utf-8'))
+        process.stdin.write(option.encode('utf-8'))
     # Finally, we wait for the command to finish by calling `communicate()` on our process handle.
     # This returns a tuple of two byte strings: one for stdout and one for stderr.
-    stdout, stderr = p.communicate()
+    stdout, stderr = process.communicate()
     # We then decode it into a string using `decode()` and print it out.
     outStr = stdout.decode('utf-8')
     errStr = stderr.decode('utf-8')
+    if saveOutput:
+        with open('output.txt', 'w') as f: # print the output in output.txt
+            f.truncate(0) # clean the file
+            f.write(outStr) # write the output
     return outStr, errStr
 
-def getOutputList(outStr): 
+def getOutputList(outStr, separator='λ'): 
     # Split the output string into a list of strings by the λ character
-    outputList = outStr.split('λ')
+    outputList = outStr.split(separator)
     return outputList  
 
 def checkOutput(output, expectedOutput, expectedRegex):
@@ -50,13 +54,11 @@ def checkOutput(output, expectedOutput, expectedRegex):
 
 def main():
     options = getOptions('commands/metacallcli-node-null-undefined.txt')
-    p = getMetacallProcess()
-    outStr, errStr = passOptionsToMetacall(p, options)
-    outputList = getOutputList(outStr)
-    checkOutput(outputList[3], None, ".*Error.*undefined.*")
-    with open('output.txt', 'w') as f: # print the output in output.txt
-        f.truncate(0) # clean the file
-        f.write(outStr) # write the output
+    metacallProcess = getMetacallProcess()
+    outStr, _ = passOptionsToMetacall(process=metacallProcess, options=options, saveOutput=True)
+    outputList = getOutputList(outStr=outStr)
+    checkOutput(output=outputList[3], expectedOutput=None, expectedRegex=".*Error.*undefined.*")
+    
 
 
 if __name__ == '__main__':
