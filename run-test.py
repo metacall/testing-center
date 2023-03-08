@@ -38,31 +38,26 @@ def getOutputList(outStr, separator='λ'):
     outputList = outStr.split(separator)
     return outputList  
 
-def checkOutput(output, expectedOutput, expectedRegex):
-    # check if the output is the same as the expected output
-    if expectedOutput is not None:
-        if output == expectedOutput:
-            print('Test passed!')
-        else:
-            print('Test failed!')
-    # check if the output matches the expected regex
+def checkOutput(output, expectedOutput):
+    print(re.search(expectedOutput, output))
+    if re.search(expectedOutput, output):
+        print('Test passed!')
     else:
-        if re.match(expectedRegex, output):
-            print('Test passed!')
-        else:
-            print('Test failed!')
+        print('Test failed!')
 
 def main():
-    options = getOptions('commands/metacallcli-node-null-undefined.txt')
+    options = getOptions('test-suits/random-password-generator-example.txt')
     metacallProcess = getMetacallProcess()
     outStr, _ = passOptionsToMetacall(process=metacallProcess, options=options, saveOutput=True)
     outputList = getOutputList(outStr=outStr)
-    checkOutput(output=outputList[3], expectedOutput=None, expectedRegex=".*Error.*undefined.*")
+    print(outputList[3])
+    checkOutput(output=outputList[3], expectedOutput="\s+[a-zA-Z0-9!-\/]{12}")
     
 
 
 if __name__ == '__main__':
     main()
+
 
 
 
