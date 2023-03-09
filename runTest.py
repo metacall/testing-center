@@ -16,7 +16,7 @@ def getMetacallProcess():
     process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # Run the "metacall" command and get a handle to its standard input stream
     return process
 
-def passOptionsToMetacall(process, options, saveOutput=False):
+def passOptionToMetacall(process, options, saveOutput=False):
     # We send some input values to the standard input stream using the `write` method of the `stdin` object. 
     # Note that we need to encode the string as bytes before sending it.
     for option in options:
@@ -48,7 +48,7 @@ def checkOutput(output, expectedOutput):
 def main():
     options = getOptions('test-suits/random-password-generator-example.txt')
     metacallProcess = getMetacallProcess()
-    outStr, _ = passOptionsToMetacall(process=metacallProcess, options=options, saveOutput=True)
+    outStr, _ = passOptionToMetacall(process=metacallProcess, options=options, saveOutput=True)
     outputList = getOutputList(outStr=outStr)
     print(outputList[3])
     checkOutput(output=outputList[3], expectedOutput="\s+[a-zA-Z0-9!-\/]{12}")
