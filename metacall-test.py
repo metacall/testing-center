@@ -48,6 +48,25 @@ def cloneRepo(repoLink):
     except:
         return False
 
+def getRuntimeTag(fileName):
+    # get the file extension
+    fileExtension = fileName.split('.')[-1]
+    if fileExtension == 'py':
+        return 'py'
+    elif fileExtension == 'js':
+        return 'node' # or js   - V8 JavaScript Engine   
+    elif fileExtension == 'rb':
+        return 'rb'
+    elif fileExtension == 'cs':
+        return 'cs'
+    elif fileExtension == 'cob':
+        return 'cob'
+    elif fileExtension == 'ts':
+        return 'ts'
+    elif fileExtension == 'cob':
+        return 'cob'
+    else: 
+        return file # Files (for handling file systems)
 
 # Parse this yaml file:
 def parseYamlFile(fileName):
@@ -65,7 +84,7 @@ def parseYamlFile(fileName):
             testCases = []
             for testCase in codeFile['test-cases']:
                 testCases.append((testCase['name'], testCase['command'], testCase['expected-stdout']))
-            codeFiles.append((codeFile['name'], codeFile['runtime-tag'], codeFile['path'],testCases))
+            codeFiles.append((codeFile['name'], codeFile['path'],testCases))
     except KeyError as e:
         print("Error: parsing yaml file!")
         print("Missing key:", e)
@@ -77,13 +96,13 @@ def compareStrings(targetString, expectedString, verbose=False):
     try:
         if verbose:
             print("Expected stdout: ", expectedString)
-            print("stdout: ", targetString)
         matchObj = re.search(expectedString, targetString)
         if matchObj:
             if verbose:
-                print(re.sub(expectedString, "\033[92m" + matchObj.group() + "\033[0m", targetString))
+                print("stdout: ", re.sub(expectedString, "\033[92m" + matchObj.group() + "\033[0m", targetString))
             return True
         else:
+            print("stdout: ", targetString)
             return False
     except TypeError:
         print("Error: expected stdout is not a string!")
@@ -91,12 +110,12 @@ def compareStrings(targetString, expectedString, verbose=False):
 
 def printTestResults(codeFile, successCount, failedTestCases): 
     try:    
-        if successCount == len(codeFile[3]):
+        if successCount == len(codeFile[2]):
             # print("\033[92m" + "All test cases passed for:", codeFile[0] + "\033[0m")
-            message = f"\033[92m{successCount}/{len(codeFile[3])} test case{'s' if successCount > 1 else ''} passed for: {codeFile[0]} \033[0m"
+            message = f"\033[92m{successCount}/{len(codeFile[2])} test case{'s' if successCount > 1 else ''} passed for: {codeFile[0]} \033[0m"
             print(message)
         else:
-            message = f"\033[91m{len(codeFile[3]) - successCount}/{len(codeFile[3])} test case{'s' if len(codeFile[3]) - successCount > 1 else ''} failed for: {codeFile[0]} \033[0m"
+            message = f"\033[91m{len(codeFile[2]) - successCount}/{len(codeFile[2])} test case{'s' if len(codeFile[2]) - successCount > 1 else ''} failed for: {codeFile[0]} \033[0m"
             print(message)  
             print("Failed test cases:")
             for failedTestCase in failedTestCases:
@@ -120,9 +139,9 @@ def main():
         print("=============")
         successCount = 0
         failedTestCases = []
-        for testCaseOrder, testCase in enumerate(codeFile[3]):
+        for testCaseOrder, testCase in enumerate(codeFile[2]):
             metacallProcess = getMetacallProcess()
-            commands = ['load ' + codeFile[1] + ' ' + codeFile[2]]
+            commands = ['load ' +  ' ' + getRuntimeTag(codeFile[0]) + ' ' +codeFile[1]]
             print("Test case:", testCase[0])
             print("Command: ", testCase[1])
             commands.append(testCase[1])
