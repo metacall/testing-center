@@ -1,38 +1,40 @@
-import subprocess
-import re
 import yaml
-import sys
+import os
 
 
-def Print(string, verbose=True):
-    if not verbose:
-        return
+def Print(message, verbose=True, color='\033[0m'):
     # This is a wrapper function for the Print function
-    print(string)
+    if verbose == False:
+        return
+    # add the color to the message
+    message = f"{color}{message}\033[0m"
+    print(message)
 
 
-def cloneRepo(repoLink):
+def cloneRepo(repoLink, verbose=False):
+    Print(f"Cloning {repoLink}...", color='\033[90m', verbose=verbose)
     try:
-        # We use the `subprocess.Popen` function to start the "git" command as a child process.
-        # We specify `stdin=subprocess.PIPE` to redirect its standard input stream to our Python program.
+        repoName = repoLink.split('/')[-1].split('.')[0]
         # check if the repo is already cloned
-        process = subprocess.Popen(['ls'],
-                                   stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-        outStr, _ = process.communicate()
-        outStr = outStr.decode('utf-8').strip()
-        if repoLink.split('/')[-1].split('.')[0] in outStr:
-            return False
+        if os.path.isdir(repoName):
+            Print("Already cloned!", color='\033[92m', verbose=verbose)
         else:
+            # We use the `subprocess.Popen` function to start the "git" command as a child process.
+            # We specify `stdin=subprocess.PIPE` to redirect its standard input stream to our Python program.
             process = subprocess.Popen(['git', 'clone', repoLink],
                                        stdin=subprocess.PIPE,
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
             # Finally, we wait for the command to finish by calling `communicate()` on our process handle.
-            process.communicate()
-    except:
-        return False
+            _, stderr = process.communicate()
+            # Check if there is an error
+            stderr = stderr.decode('utf-8')
+            if "Fatal" in stderr or "fatal" in stderr or "error" in stderr or "Error" in stderr or "ERROR" in stderr:
+                raise Exception(stderr)
+            Print("Cloned successfully!", color='\033[92m', verbose=verbose)
+    except Exception as e:
+        print(f"Error: {e}", verbose=verbose, color='\033[91m')
+        exit()
 
 
 def getRuntimeTag(fileName):
@@ -41,6 +43,9 @@ def getRuntimeTag(fileName):
     if fileExtension == 'py':
         return 'py'
     elif fileExtension == 'js':
+        Print(
+            "Notice that the default runtime is node, if you want to use the V8 JavaScript Engine, please add xxxxxx",
+            color='\033[90m')
         return 'node'  # or js   - V8 JavaScript Engine
     elif fileExtension == 'rb':
         return 'rb'
@@ -56,69 +61,41 @@ def getRuntimeTag(fileName):
         return file  # Files (for handling file systems)
 
 
+def checkIfFileExists(filePath):
+    # check if the file exists
+    if os.path.isfile(filePath):
+        return True
+    return False
+
 # Parse this yaml file:
-def parseYamlFile(fileName):
+def parseYamlFile(fileName, verbose=False):
     try:
         with open(fileName, 'r') as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
     except FileNotFoundError:
-        Print("File not found!")
+        Print(f"Error: file {fileName} does not exist!",
+                    color='\033[91m',
+                    verbose=verbose)
         exit()
     try:
         projectName = data['project']
         repoUrl = data['repo-url']
         codeFiles = []  # a list of test suites tuples (name, steps)
         for codeFile in data['code-files']:
+            if not checkIfFileExists(filePath=codeFile['path']):
+                Print(
+                    f"Error: file {codeFile['path']} does not exist!",
+                    color='\033[91m',
+                    verbose=verbose)
+                exit()
             testCases = []
             for testCase in codeFile['test-cases']:
                 testCases.append((testCase['name'], testCase['command'],
                                   testCase['expected-stdout']))
-            codeFiles.append((codeFile['name'], codeFile['path'], testCases))
+            fileName = codeFile['path'].split('/')[-1]
+            codeFiles.append((fileName, codeFile['path'], testCases))
     except KeyError as e:
-        Print("Error: parsing yaml file!")
-        Print("Missing key:", e)
+        Print("Error: parsing yaml file!", color='\033[91m', verbose=verbose)
+        Print(f"Missing key:{e}", color='\033[91m', verbose=verbose)
         exit()
     return projectName, repoUrl, codeFiles
-
-
-def compareStrings(targetString, expectedString, verbose=False):
-    try:
-        if verbose:
-            Print(f"Expected stdout: {expectedString}")
-        matchObj = re.search(expectedString, targetString)
-        if matchObj:
-            if verbose:
-                out = re.sub(expectedString,
-                             "\033[92m" + matchObj.group() + "\033[0m",
-                             targetString)
-                Print(f"stdout: {out}")
-            return True
-        else:
-            Print(f"stdout: {targetString}")
-            return False
-    except TypeError:
-        Print("Error: expected stdout is not a string!")
-        return False
-
-
-def printTestResults(codeFile, successCount, failedTestCases):
-    try:
-        if successCount == len(codeFile[2]):
-            Print(
-                f"\033[92m{successCount}/{len(codeFile[2])} test case{'s' if successCount > 1 else ''} passed for: {codeFile[0]} \033[0m"
-            )
-        else:
-            Print(
-                f"\033[91m{len(codeFile[2]) - successCount}/{len(codeFile[2])} test case{'s' if len(codeFile[2]) - successCount > 1 else ''} failed for: {codeFile[0]} \033[0m"
-            )
-            Print("Failed test cases:")
-            for failedTestCase in failedTestCases:
-                Print(
-                    f"\033[91m{failedTestCase[0] + 1}. {failedTestCase[1]}\033[0m"
-                )
-    except:
-        return
-
-
-def getSuiteFileName():
-    return sys.argv[1]

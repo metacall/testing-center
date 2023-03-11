@@ -11,7 +11,9 @@ def getMetacallProcess():
         )  # Run the "metacall" command and get a handle to its standard input stream
         return process
     except:
-        return None
+        Print(
+            "Error: passing options to metacall or metacall is not installed!", color='\033[91m')
+        exit()
 
 
 def passOptionsToMetacall(process, options):
@@ -31,8 +33,8 @@ def passOptionsToMetacall(process, options):
             'λ')  # split the output by the λ character
     except:
         Print(
-            "Error: passing options to metacall or metacall is not installed!")
-        return None
+            "Error: passing options to metacall or metacall is not installed!", color='\033[91m')
+        exit()
     return outStr[-2]
 
 
@@ -43,5 +45,5 @@ def runInCLI(options):
         return passOptionsToMetacall(p, options)
     except:
         Print(
-            "Error: passing options to metacall or metacall is not installed!")
-        return None
+            "Error: passing options to metacall or metacall is not installed!", color='\033[91m')
+        exit()

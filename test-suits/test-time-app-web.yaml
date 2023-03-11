@@ -1,8 +1,7 @@
 project: time-app-web
 repo-url: https://github.com/metacall/examples
 code-files:
-  - name: index.py 
-    path: examples/time-app-web/index.py
+  - path: examples/time-app-web/index.py
     test-cases:
       - name: Check the time is generated in the correct format
         command: call time()

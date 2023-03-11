@@ -8,8 +8,7 @@ The test suits are written in a yaml format. The following is an example of a te
 project: random-password-generator-example
 repo-url: https://github.com/metacall/random-password-generator-example
 code-files:
-  - name: app.py
-    path: random-password-generator-example/app.py
+  - path: random-password-generator-example/app.py
     test-cases:
       - name: Check the password is generated in the correct length
         command: call getRandomPassword(12)
@@ -18,3 +17,19 @@ code-files:
         command: call getRandomPassword()
         expected-stdout: 'missing 1 required positional argument'
 ``` 
+
+## Arguments
+The following arguments are available for the `metacall-test.py` script:
+```bash
+> ./metacall-test.py -h
+usage: metacall-test.py [-h] [-V] [-f FILE]
+
+options:
+  -h, --help            show this help message and exit
+  -V, --verbose         increase output verbosity
+  -f FILE, --file FILE  the test suite file name
+```
+Example:
+```bash
+./metacall-test.py -f  test-suits/test-time-app-web.yaml -V
+```
