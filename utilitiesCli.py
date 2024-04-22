@@ -1,4 +1,7 @@
 import subprocess
+import os
+
+
 def getMetacallProcess():
     try:
         # We use the `subprocess.Popen` function to start the "metacall" command as a child process.
@@ -26,16 +29,16 @@ def passOptionsToMetacall(process, options):
             process.stdin.flush()
         # Finally, we wait for the command to finish by calling `communicate()` on our process handle.
         # This returns a tuple of two byte strings: one for stdout and one for stderr.
-        stdout, _ = process.communicate(
-        )  # the stderr is not used as metacall does not return any errors
+        stdout, _ = process.communicate()  
+        # the stderr is not used as metacall does not return any errors
         # We then decode it into a string using `decode()` and Print it out.
-        outStr = stdout.decode('utf-8').strip().split(
-            'λ')  # split the output by the λ character
+        outStr = [s.replace("\n", "") for s in stdout.decode('utf-8').split('λ ')] # split the output by the λ character
+        print(f"outstr: {outStr}")
     except:
         Print(
             "Error: passing options to metacall or metacall is not installed!", color='\033[91m')
         exit()
-    return outStr[-2]
+    return outStr[2]
 
 
 def runInCLI(options):

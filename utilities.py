@@ -1,5 +1,6 @@
 import yaml
 import os
+import subprocess
 
 
 def Print(message, verbose=True, color='\033[0m'):
@@ -35,6 +36,25 @@ def cloneRepo(repoLink, verbose=False):
     except Exception as e:
         print(f"Error: {e}", verbose=verbose, color='\033[91m')
         exit()
+
+
+def installDependencies(directory):
+    for root, dirs, files in os.walk(directory):
+        if 'package.json' in files:
+            print(f"Found package.json in {root}")
+            try:
+                subprocess.run(["npm", "install"], cwd=root, check=True)
+                print("npm install executed successfully.")
+            except subprocess.CalledProcessError as e:
+                print(f"npm install failed with error: {e}")
+
+        if 'requirements.txt' in files:
+            print(f"Found requirements.txt in {root}")
+            try:
+                subprocess.run(["pip", "install", "-r", "requirements.txt"], cwd=root, check=True)
+                print("pip install -r requirements.txt executed successfully.")
+            except subprocess.CalledProcessError as e:
+                print(f"pip install -r requirements.txt failed with error: {e}")
 
 
 def getRuntimeTag(fileName):

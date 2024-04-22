@@ -1,4 +1,4 @@
-name: Test Suite
+name: MetaCall Examples CI
 
 on:
   workflow_dispatch:
@@ -10,27 +10,69 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  LinuxUbuntuRun:
+    name: Linux - Ubuntu Run
+    runs-on: ubuntu-latest  # Use a runner compatible with the architecture
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # Checkout the repository code
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-
+          python-version: '3.12'
+      
       - name: Install MetaCall
-        run: curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
+        run: |
+          sudo apt update
+          curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
 
-      # TODO
-      # - name: Install dependencies
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install -r requirements.txt
+      - name: Run Tests Suits
+        run: |
+          find test-suits -type f -name "*.yml" -exec python ./metacall-test.py -f {} -V \;
 
-      # TODO: Iterate through the whole folder and test all suites
-      - name: Run tests
-        run: python ./metacall-test.py -f  test-suits/test-time-app-web.yaml -V
+  WindowsRun:
+    name: Windows Run
+    runs-on: windows-latest  # Use a runner compatible with the architecture
+    steps:
+      - uses: actions/checkout@v4  # Checkout the repository code
+      
+      - name: Get Latest Release Download
+        shell: pwsh
+        run: |
+          powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
+          
+      - name: Running Tests
+        shell: pwsh
+        run: |
+          # git clone https://github.com/metacall/examples.git
+          # git clone https://github.com/metacall/examples-testing.git
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+          scoop install https://raw.githubusercontent.com/hymkor/expect/master/expect-lua.json
+          pip install pyyaml
+          expect test-scripts/string-manipulation/test-case1.lua > log.txt
+          echo ""
+          cat log.txt
+          echo ""
+
+          # python windows-tests.py
+
+  MacOSRun:
+    name: MacOS Run
+    runs-on: macos-latest  # Use a runner compatible with the architecture
+    steps:
+      - uses: actions/checkout@v4  # Checkout the repository code
+      
+      - name: Get Latest Release Download
+        run: |
+          # curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
+
+      - name: Running Tests
+        run: |
+          # git clone https://github.com/metacall/examples.git
+          # git clone https://github.com/metacall/examples-testing.git
+          # metacall pip3 install requests
+          # chmod +x macos-tests.sh
+          # ./macos-tests.sh
 

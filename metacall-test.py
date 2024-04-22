@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from utilities import parseYamlFile, getRuntimeTag, cloneRepo, Print
+from utilities import parseYamlFile, getRuntimeTag, cloneRepo, Print, installDependencies
 from utilitiesCli import runInCLI
 from utilitiesResults import compareStrings, printTestResults
 from utilitiesArgParser import getSuiteFileName, getVerbose
@@ -14,6 +14,8 @@ def main():
     projectName, repoUrl, codeFiles = parseYamlFile(testSuiteFileName, verbose=verbose)
     Print(f"{projectName}", color='\033[94m', verbose=verbose)
     cloneRepo(repoUrl, verbose=verbose)
+    # installDependencies("examples")
+
     Print("================================", verbose=verbose)
     for codeFile in codeFiles:
         Print(f"Testing: {codeFile[0]}\n=============", verbose=verbose)
@@ -21,12 +23,14 @@ def main():
         failedTestCases = []
         for testCaseOrder, testCase in enumerate(codeFile[2]):
             commands = [
-                'load ' + ' ' + getRuntimeTag(codeFile[0]) + ' ' + codeFile[1]
+                'load' + ' ' + getRuntimeTag(codeFile[0]) + ' ' + codeFile[1]
             ]
             Print(f"- {testCase[0]}", color='\033[94m', verbose=verbose)
             Print(f"Command: {testCase[1]}", verbose=verbose)
-            commands.append(testCase[1])
+            commands.extend([testCase[1], "exit"])
             outStr = runInCLI(options=commands)
+            print(commands)
+            print(outStr)
             if compareStrings(targetString=outStr,
                               expectedString=testCase[2],
                               verbose=verbose):

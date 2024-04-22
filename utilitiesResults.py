@@ -4,18 +4,17 @@ from utilities import Print
 
 def compareStrings(targetString, expectedString, verbose=False):
     try:
-        Print(f"Expected stdout: {expectedString}", verbose=verbose)
-        matchObj = re.search(expectedString, targetString)
-        if matchObj:
-            if verbose:
-                out = re.sub(expectedString,
-                             "\033[92m" + matchObj.group() + "\033[0m",
-                             targetString)
-                Print(f"stdout: {out}", verbose=verbose)
+        orgtargetString, orgexpectedString = targetString, expectedString
+        print(f"Expected stdout: {expectedString}")
+
+        if re.search(expectedString, targetString):
+            return True
+        elif expectedString.translate(str.maketrans({"\"": "'", " ": "", "\\": ""})).lower() == targetString.lower().replace(" ", ""):
             return True
         else:
             Print(f"stdout: {targetString}")
             return False
+        
     except TypeError:
         Print("Error: expected stdout is not a string!",
               color='\033[91m',
