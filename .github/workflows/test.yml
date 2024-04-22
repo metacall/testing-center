@@ -31,6 +31,7 @@ jobs:
         run: |
           pip install PyYAML
           find test-suits -type f -name "*.yaml" -exec python ./metacall-test.py -f {} -V \;
+          for file in failed-test-cases.txt; do [ -s "$file" ] && cat failed-test-cases.txt && exit 1; done
 
   WindowsRun:
     name: Windows Run
