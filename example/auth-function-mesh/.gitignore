@@ -102,10 +102,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
-# vscode
-.vscode/
-
-# Custom
-test/
-node_modules/
