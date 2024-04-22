@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Tests Suits
         run: |
-          find test-suits -type f -name "*.yml" -exec python ./metacall-test.py -f {} -V \;
+          find test-suits -type f -name "*.yaml" -exec python ./metacall-test.py -f {} -V \;
 
   WindowsRun:
     name: Windows Run
