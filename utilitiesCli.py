@@ -33,7 +33,7 @@ def passOptionsToMetacall(process, options):
         # the stderr is not used as metacall does not return any errors
         # We then decode it into a string using `decode()` and Print it out.
         outStr = [s.replace("\n", "") for s in stdout.decode('utf-8').split('λ ')] # split the output by the λ character
-        print(f"outstr: {outStr}")
+        # print(f"outstr: {outStr}")
     except:
         Print(
             "Error: passing options to metacall or metacall is not installed!", color='\033[91m')
