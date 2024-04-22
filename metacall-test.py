@@ -29,8 +29,8 @@ def main():
             Print(f"Command: {testCase[1]}", verbose=verbose)
             commands.extend([testCase[1], "exit"])
             outStr = runInCLI(options=commands)
-            print(commands)
-            print(outStr)
+            # print(commands)
+            # print(outStr)
             if compareStrings(targetString=outStr,
                               expectedString=testCase[2],
                               verbose=verbose):
