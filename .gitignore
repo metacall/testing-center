@@ -109,4 +109,3 @@ venv.bak/
 # Custom
 test/
 node_modules/
-examples/
