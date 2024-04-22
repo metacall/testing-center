@@ -29,6 +29,7 @@ jobs:
 
       - name: Run Tests Suits
         run: |
+          pip install PyYAML
           find test-suits -type f -name "*.yaml" -exec python ./metacall-test.py -f {} -V \;
 
   WindowsRun:
