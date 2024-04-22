@@ -43,6 +43,12 @@ def main():
                 Print(f"test case {testCaseOrder+1} failed for: {codeFile[0]}\n-------------",
                       color='\033[91m',
                       verbose=verbose)
+                with open("failed-test-cases.txt", "a") as f:
+                    f.write(f"Command: {testCase[1]}\n")
+                    f.write(f"Expected stdout: {testCase[2]}\n")
+                    f.write(f"stdout: {outStr}\n")
+                    f.write(f"test case {testCaseOrder+1} failed for: {codeFile[0]}\n-------------\n")
+
         printTestResults(codeFile=codeFile,
                          successCount=successCount,
                          failedTestCases=failedTestCases,
