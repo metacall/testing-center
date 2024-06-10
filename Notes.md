@@ -1,24 +1,5 @@
 # MetaCall Project Notes
 
-## Objective
-The idea is to write a Js or py script that:
-1. Downloads and installs metacall.
-2. Clones each example repo.
-3. Loads it with metacall cli.
-4. Verifies that works.
-5. Deploys it with metacall deploy cli.
-
-
-## Helpful commands
-1. Install Docker: `wget -O - https://gist.githubusercontent.com/fredhsu/f3d927d765727181767b3b13a3a23704/raw/3c2c55f185e23268f7fce399539cb6f1f3c45146/ubuntudocker.sh | bash`
-2. Copy a file though ssh to the server: `sudo scp -i ./terraform/keys/gp.pem ./test.py user<>@<server IP>:~/`
-3. To build the image: `docker build -t python-app .`.
-4. To run and enter the container: `docker run -it python-app /bin/bash`.
-5. Run the container and mount the current directory to the container: `docker run -it -v $(pwd):/app python-app /bin/bash` or `docker run -it -v .:/app python-app /bin/bash`
-6. To list docker containers:` docker ps -a`.
-7. To delete all containers: `docker container prune`.
-8. Run the script: `python3 main.py`.
-
 ## Important Notes
 1. We will install the cli anyway we don't need to check if it's installed.
 2. This is a [test example](https://github.com/metacall/core/blob/develop/source/cli/metacallcli/test/commands/metacallcli-tsx-templating.txt). The code is **loading a template file** written in TypeScript, named "templating.tsx". It then **inspects the code to check for any errors or warnings**. Then it **calls a function named "hello" with the argument "metaprogrammer"**. Finally, **the code exits** the program. 

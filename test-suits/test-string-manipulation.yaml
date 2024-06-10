@@ -6,10 +6,10 @@ code-files:
     test-cases:
       - name: Check the longest_repetition function
         command: call longest_repetition("aaa")
-        expected-stdout: '\["a",3\]'
+        expected-stdout: "[ 'a', 3 ]"
       - name: Check the longest_repetition function with a different string
         command: call longest_repetition("bbbaaabaaaa")
-        expected-stdout: '\["a",4\]'
+        expected-stdout: "[ 'a', 4 ]"
       - name: Check the longest_repetition function with an empty string
         command: call longest_repetition("")
         expected-stdout: '\[null,0\]'

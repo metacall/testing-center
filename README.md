@@ -26,6 +26,7 @@ usage: metacall-test.py [-h] [-V] [-f FILE]
 
 options:
   -h, --help            show this help message and exit
+  -V, --verbose         increase output verbosity
   -f FILE, --file FILE  the test suite file name
 ```
 Example:
