@@ -8,7 +8,7 @@ code-files:
         expected-stdout: '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
       - name: Check calling the time function with a parameter
         command: call time(1)
-        expected-stdout: 'takes 0 positional arguments but 1 was given'
+        expected-stdout: 'time() takes 0 positional arguments but 1 was given'
       - name: Check index.html is fully returned
         command: call index()
         expected-stdout: '<html>[\w\W]*</html>'
