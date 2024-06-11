@@ -1,6 +1,5 @@
 # ToDos
 
-- [ ] Implement CI.
 - [ ] Support FaaS.
 - [ ] Update/fix test cases.
 - [ ] Run the pipeline on Linux.
