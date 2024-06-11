@@ -31,5 +31,5 @@ options:
 ```
 Example:
 ```bash
-./testing.py -f  tests/test-time-app-web.yaml -V
+./testing.py -f  suites/test-time-app-web.yaml -V
 ```
