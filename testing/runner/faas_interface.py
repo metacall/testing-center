@@ -1,4 +1,4 @@
-from utilities.runner.runner_interface import RunnerInterface
+from testing.runner.runner_interface import RunnerInterface
 
 class FaaSInterface(RunnerInterface):
     def run_test_command(self, filename, file_path, test_case_command):

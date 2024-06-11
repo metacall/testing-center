@@ -1,6 +1,6 @@
 import subprocess
-from utilities.runner.runner_interface import RunnerInterface
-from utilities.logger import Logger
+from testing.runner.runner_interface import RunnerInterface
+from testing.logger import Logger
 
 class CLIInterface(RunnerInterface):
     def __init__(self):

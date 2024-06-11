@@ -1,8 +1,8 @@
 import argparse
-from utilities.repo_manager import RepoManager
-from utilities.test_suites_extractor import TestSuitesExtractor
-from utilities.test_runner import TestRunner
-from utilities.logger import Logger
+from testing.repo_manager import RepoManager
+from testing.test_suites_extractor import TestSuitesExtractor
+from testing.test_runner import TestRunner
+from testing.logger import Logger
 
 def main():
     parser = argparse.ArgumentParser()

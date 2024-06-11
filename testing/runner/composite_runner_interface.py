@@ -1,4 +1,4 @@
-from utilities.runner.runner_interface import RunnerInterface
+from testing.runner.runner_interface import RunnerInterface
 
 class CompositeRunnerInterface(RunnerInterface):
     def __init__(self):

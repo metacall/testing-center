@@ -1,6 +1,6 @@
 import os
 import subprocess
-from utilities.logger import Logger
+from testing.logger import Logger
 
 class RepoManager:
     def __init__(self, repo_url):

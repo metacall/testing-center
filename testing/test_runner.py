@@ -1,6 +1,6 @@
 import re
-from utilities.runner.interface_factory import InterfaceFactory
-from utilities.logger import Logger
+from testing.runner.interface_factory import InterfaceFactory
+from testing.logger import Logger
 
 class TestRunner:
     def __init__(self, interface_type):
