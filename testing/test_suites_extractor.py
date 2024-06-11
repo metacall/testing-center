@@ -1,5 +1,5 @@
 import yaml
-from utilities.logger import Logger
+from testing.logger import Logger
 
 class TestSuitesExtractor:
     def __init__(self, file_name):

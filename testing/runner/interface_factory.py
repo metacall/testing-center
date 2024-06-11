@@ -1,6 +1,6 @@
-from utilities.runner.cli_interface import CLIInterface
-from utilities.runner.faas_interface import FaaSInterface
-from utilities.runner.composite_runner_interface import CompositeRunnerInterface
+from testing.runner.cli_interface import CLIInterface
+from testing.runner.faas_interface import FaaSInterface
+from testing.runner.composite_runner_interface import CompositeRunnerInterface
 
 class InterfaceFactory:
     @staticmethod
