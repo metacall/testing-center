@@ -1,49 +1,31 @@
-#!/usr/bin/python3
-
-import sys
-from utilities import parseYamlFile, getRuntimeTag, cloneRepo, Print
-from utilitiesCli import runInCLI
-from utilitiesResults import compareStrings, printTestResults
-from utilitiesArgParser import getSuiteFileName, getVerbose
-
+import argparse
+from utilities.repo_manager import RepoManager
+from utilities.test_suites_extractor import TestSuitesExtractor
+from utilities.test_runner import TestRunner
+from utilities.logger import Logger
 
 def main():
-    # accept the test suite file name as an argument
-    testSuiteFileName = getSuiteFileName()
-    verbose = getVerbose()
-    projectName, repoUrl, codeFiles = parseYamlFile(testSuiteFileName, verbose=verbose)
-    Print(f"{projectName}", color='\033[94m', verbose=verbose)
-    cloneRepo(repoUrl, verbose=verbose)
-    Print("================================", verbose=verbose)
-    for codeFile in codeFiles:
-        Print(f"Testing: {codeFile[0]}\n=============", verbose=verbose)
-        successCount = 0
-        failedTestCases = []
-        for testCaseOrder, testCase in enumerate(codeFile[2]):
-            commands = [
-                'load ' + ' ' + getRuntimeTag(codeFile[0]) + ' ' + codeFile[1]
-            ]
-            Print(f"- {testCase[0]}", color='\033[94m', verbose=verbose)
-            Print(f"Command: {testCase[1]}", verbose=verbose)
-            commands.append(testCase[1])
-            outStr = runInCLI(options=commands)
-            if compareStrings(targetString=outStr,
-                              expectedString=testCase[2],
-                              verbose=verbose):
-                successCount += 1
-                Print(f"test case {testCaseOrder+1} passed for: {codeFile[0]}\n-------------",
-                      color='\033[92m',
-                      verbose=verbose)
-            else:
-                failedTestCases.append((testCaseOrder, testCase[0]))
-                Print(f"test case {testCaseOrder+1} failed for: {codeFile[0]}\n-------------",
-                      color='\033[91m',
-                      verbose=verbose)
-        printTestResults(codeFile=codeFile,
-                         successCount=successCount,
-                         failedTestCases=failedTestCases,
-                         verbose=verbose)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", action="store", help="the test suite file name")
+    parser.add_argument("-V", "--verbose", action="store_true", help="increase output verbosity")
+    args = parser.parse_args()
 
+    logger = Logger.get_instance()
+    if args.verbose:
+        logger.set_level("DEBUG")
+    else:
+        logger.set_level("INFO")
 
-if __name__ == '__main__':
+    test_suite_file_name = args.file
+
+    test_suites_extractor = TestSuitesExtractor(test_suite_file_name)
+    project_name, repo_url, test_suites = test_suites_extractor.extract_test_suites()
+
+    repo_manager = RepoManager(repo_url)
+    repo_manager.clone_repo_if_not_exist()
+
+    test_runner = TestRunner("composite")
+    test_runner.run_tests(project_name, test_suites)
+
+if __name__ == "__main__":
     main()

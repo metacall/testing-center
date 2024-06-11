@@ -1,4 +1,0 @@
-load ts templating.tsx
-inspect
-call hello("metaprogrammer")
-exit

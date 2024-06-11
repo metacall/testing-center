@@ -1,3 +1,0 @@
-load node cli-test-onload.js
-inspect
-exit

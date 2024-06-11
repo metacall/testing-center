@@ -1,4 +1,0 @@
-load file template.html
-inspect
-call template.html()
-exit
