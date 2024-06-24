@@ -24,7 +24,7 @@ def main():
     repo_manager = RepoManager(repo_url)
     repo_manager.clone_repo_if_not_exist()
 
-    test_runner = TestRunner("composite")
+    test_runner = TestRunner(["cli"])
     test_runner.run_tests(project_name, test_suites)
 
 if __name__ == "__main__":
