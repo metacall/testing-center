@@ -11,14 +11,15 @@ class RepoManager:
         try:
             repo_name = self.repo_url.split('/')[-1].split('.')[0]
             if os.path.isdir(repo_name):
-                self.logger.debug("Repo is already cloned!")
+                self.logger.warning("Repo is already cloned!")
             else:
                 process = subprocess.Popen(['git', 'clone', self.repo_url], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 _, stderr = process.communicate()
                 stderr = stderr.decode('utf-8')
-                if "Fatal" in stderr or "fatal" in stderr or "error" in stderr or "Error" in stderr or "ERROR" in stderr:
-                    raise Exception(stderr)
+                error_keywords = ["Fatal", "fatal", "error", "Error", "ERROR"]
+                if any(keyword in stderr for keyword in error_keywords):
+                    raise ValueError(stderr)
                 self.logger.debug("Repo is cloned successfully!")
-        except Exception as e:
+        except ValueError as e:
             self.logger.error(f"Error: {e}")
             exit()

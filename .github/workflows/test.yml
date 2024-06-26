@@ -1,4 +1,4 @@
-name: Test Suite
+name: MetaCall Examples CI
 
 on:
   workflow_dispatch:
@@ -7,15 +7,12 @@ on:
     tags:
       - 'v*.*.*'
     branches:
-      - master
+      - main
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest] # TODO: macos-latest
-    runs-on: ${{ matrix.os }}
+  LinuxUbuntuRun:
+    name: Linux - Ubuntu Run
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,30 +20,70 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-
-      - name: Install MetaCall (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
-
-      - name: Install MetaCall (Windows)
-        if: matrix.os == 'windows-latest'
-        run: powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
-
-      # TODO:
-      # - name: Install MetaCall (MacOS)
-      #   if: matrix.os == 'macos-latest'
-      #   run: curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
-
-      - name: Install dependencies
+          python-version: '3.12'
+          
+      
+      - name: Install MetaCall
         run: |
-          python -m pip install --upgrade pip
+          sudo apt update
+          curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
+
+      - name: Install Dependencies
+        run: |
           pip install -r requirements.txt
+          pip install metacall
+          
 
-      - name: Run tests
-        shell: bash
+
+      - name: Run Tests Suits
         run: |
-          for test in ./suites/*.yaml; do
-            echo "Running $test"
-            python3 ./testing.py -f $test -V
-          done
+          pip install -r requirements.txt
+          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V \;
+
+  # WindowsRun:
+  #   name: Windows Run
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.12'
+      
+  #     - name: Install MetaCall
+  #       shell: pwsh
+  #       run: |
+  #         powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
+          
+  #     - name: Run Test Suits
+  #       shell: pwsh
+  #       run: |
+  #         pip install pyyaml
+  #         Get-ChildItem -Path test-suits -Filter *.yaml | ForEach-Object { python ./metacall-test.py -f $_.FullName -V }
+  #         Clear-Host
+  #         for /f %f in (failed-test-cases.txt) do type %f && exit /b 1
+
+  # MacOSRun:
+  #   name: MacOS Run
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.12'
+      
+  #     - name: Install MetaCall
+  #       run: |
+  #         curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
+
+  #     - name: Run Tests Suits
+  #       run: |
+  #         pip install pyyaml
+  #         find test-suits -type f -name "*.yaml" -exec python ./metacall-test.py -f {} -V \;
+  #         clear
+  #         for file in failed-test-cases.txt; do [ -s "$file" ] && cat failed-test-cases.txt && exit 1; done

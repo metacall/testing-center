@@ -12,10 +12,10 @@ code-files:
     test-cases:
       - name: Check the password is generated in the correct length
         command: call getRandomPassword(12)
-        expected-stdout: '\"[\w\W]{12}\"'
+        expected-pattern: '\"[\w\W]{12}\"'
       - name: Check the password is generated in the correct length
         command: call getRandomPassword()
-        expected-stdout: 'missing 1 required positional argument'
+        expected-pattern: 'missing 1 required positional argument'
 ``` 
 
 ## Arguments

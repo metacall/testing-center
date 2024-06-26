@@ -15,7 +15,7 @@ class Logger:
         else:
             Logger._instance = self
             self.logger = logging.getLogger("CLI_Tool")
-            self.level = "INFO"
+            self.level = "INFO" # default level
             handler = logging.StreamHandler()
             formatter = logging.Formatter('%(levelname)s - %(message)s')
             handler.setFormatter(formatter)
@@ -30,6 +30,7 @@ class Logger:
             "ERROR": logging.ERROR,
             "CRITICAL": logging.CRITICAL
         }
+        self.level = level.upper()
         self.logger.setLevel(level_map.get(level.upper(), logging.INFO))
 
     def get_level(self):

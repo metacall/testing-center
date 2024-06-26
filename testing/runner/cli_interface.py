@@ -27,21 +27,19 @@ class CLIInterface(RunnerInterface):
         file_name = file_path.split('/')[-1]
         try:
             process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.logger.debug("Metacall CLI started...")
             
-
             commands = ['load ' + ' ' + self.get_runtime_tag(file_name) + ' ' + file_path, test_case_command, 'exit']
             commands = '\n'.join(commands) + '\n' # join the commands with a newline character
-
+        
             process.stdin.write(f"{commands}".encode('utf-8'))
             process.stdin.flush()
             
             stdout, _ = process.communicate()
-
+        
             out_str = stdout.decode('utf-8').strip().split('λ')
             
             return out_str[2]
         
-        except Exception as e:
+        except subprocess.CalledProcessError as e:
             self.logger.error(f"Error: {e}")
-            return None
+            return ""

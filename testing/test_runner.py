@@ -52,10 +52,9 @@ class TestRunner:
         self.test_suite_factory = DynamicTestSuiteFactory(self.logger, self.interfaces)
         self.test_verbosity = 2 if self.logger.get_level() == "DEBUG" else 1
 
-    def create_project_test_suites(self, project_name, test_suites):
+    def create_project_test_suites(self, test_suites):
         test_loader = unittest.TestLoader()
         master_suite = unittest.TestSuite()
-        master_suite.__name__ = project_name
 
         for file_path, test_cases in test_suites:
             test_suite = self.test_suite_factory.create_test_suite(file_path, test_cases)
@@ -63,6 +62,9 @@ class TestRunner:
         return master_suite
 
     def run_tests(self, project_name, test_suites):
-        master_suite = self.create_project_test_suites(project_name, test_suites)
+        master_suite = self.create_project_test_suites(test_suites)
         runner = unittest.TextTestRunner(verbosity=self.test_verbosity)
-        runner.run(master_suite)
+        result = runner.run(master_suite)
+        if not result.wasSuccessful():
+            self.logger.error("Some tests failed!")
+            exit(1)
