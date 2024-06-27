@@ -6,10 +6,10 @@ code-files:
     test-cases:
       - name: Check the encrypt function
         command: call encrypt("asd")
-        expected-stdout: 'eyJhbGciOiJIUzI1NiJ9.YXNk.QNa-p8QpuHcVUDMN_Ih4x4vidWp31365GM4zrSr3t0s'
+        expected-pattern: 'eyJhbGciOiJIUzI1NiJ9.YXNk.QNa-p8QpuHcVUDMN_Ih4x4vidWp31365GM4zrSr3t0s'
       - name: Check the decrypt function
         command: call decrypt("eyJhbGciOiJIUzI1NiJ9.YXNk.QNa-p8QpuHcVUDMN_Ih4x4vidWp31365GM4zrSr3t0s")
-        expected-stdout: 'asd'
+        expected-pattern: 'asd'
 
       
      
