@@ -18,13 +18,17 @@ def main():
 
     test_suite_file_name = args.file
 
+
+
     test_suites_extractor = TestSuitesExtractor(test_suite_file_name)
     project_name, repo_url, test_suites = test_suites_extractor.extract_test_suites()
 
+    logger.info(f"Project: {project_name}")
+                
     repo_manager = RepoManager(repo_url)
     repo_manager.clone_repo_if_not_exist()
 
-    test_runner = TestRunner("composite")
+    test_runner = TestRunner(["cli"])
     test_runner.run_tests(project_name, test_suites)
 
 if __name__ == "__main__":

@@ -6,13 +6,13 @@ code-files:
     test-cases:
       - name: Check the sum function
         command: call sum(3,4)
-        expected-stdout: '7'
+        expected-pattern: '7'
       - name: Check the signin function
         command: call signin("Mostafa","1557")
-        expected-stdout: '.*'
+        expected-pattern: '.*'
       - name: Check the reverse function
         command: call reverse("abcdefg")
-        expected-stdout: '.*'
+        expected-pattern: "gfedcba"
     
      
      
