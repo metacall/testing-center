@@ -63,7 +63,7 @@ jobs:
       - name: Verify MetaCall installation
         shell: powershell
         run: | 
-          metacall.bat
+          metacall
 
       - name: Install Dependencies
         shell: bash
