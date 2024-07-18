@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    tags:
-      - 'v*.*.*'
     branches:
       - main
 
@@ -51,18 +49,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      
-      - name: Cache MetaCall
-        id: cache-metacall
-        uses: actions/cache@v3
-        with:
-          path: C:\Users\runneradmin\AppData\Local\MetaCall
-          key: ${{ runner.os }}-metacall-${{ hashFiles('metacall-install') }}
-          restore-keys: |
-            ${{ runner.os }}-metacall-
   
       - name: Install MetaCall
-        if: steps.cache-metacall.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
