@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  LinuxUbuntuRun:
+  Linux:
     name: Linux - Ubuntu Run
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
         run: |
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V \;
 
-  WindowsRun:
+  Windows:
     name: Windows Run
     runs-on: windows-latest
     steps:
@@ -77,7 +77,7 @@ jobs:
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V \;
     
 
-  # MacOSRun:
+  # MacOS:
   #   name: MacOS Run
   #   runs-on: macos-latest
   #   steps:
