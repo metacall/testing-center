@@ -1,3 +1,4 @@
+import platform
 import subprocess
 from testing.runner.runner_interface import RunnerInterface
 from testing.logger import Logger
@@ -26,7 +27,10 @@ class CLIInterface(RunnerInterface):
     def run_test_command(self, file_path, test_case_command):
         file_name = file_path.split('/')[-1]
         try:
-            process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if platform.system() == 'Windows':
+                process = subprocess.Popen(['metacall.bat'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            else:
+                process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
             commands = ['load ' + ' ' + self.get_runtime_tag(file_name) + ' ' + file_path, test_case_command, 'exit']
             commands = '\n'.join(commands) + '\n' # join the commands with a newline character
@@ -35,9 +39,8 @@ class CLIInterface(RunnerInterface):
             process.stdin.flush()
             
             stdout, _ = process.communicate()
-        
-            out_str = stdout.decode('utf-8').strip().split('λ')
             
+            out_str = stdout.decode('utf-8').strip().split('\n>' if platform.system() == 'Windows' else 'λ')
             return out_str[2]
         
         except subprocess.CalledProcessError as e:

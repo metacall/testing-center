@@ -17,8 +17,8 @@ def main():
         logger.set_level("INFO")
 
     test_suite_file_name = args.file
-
-
+    if not test_suite_file_name:
+        logger.error("Error: test suite file name is required!")
 
     test_suites_extractor = TestSuitesExtractor(test_suite_file_name)
     project_name, repo_url, test_suites = test_suites_extractor.extract_test_suites()
