@@ -4,13 +4,13 @@ code-files:
   - path: examples/time-app-web/index.py
     test-cases:
       - name: Check the time is generated in the correct format
-        command: call time()
+        functionCall: time()
         expected-pattern: '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
       - name: Check calling the time function with a parameter
-        command: call time(1)
+        functionCall: time(1)
         expected-pattern: 'takes 0 positional arguments but 1 was given'
       - name: Check index.html is fully returned
-        command: call index()
+        functionCall: index()
         expected-pattern: '<html>[\w\W]*</html>'
      
  

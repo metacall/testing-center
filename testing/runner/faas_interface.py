@@ -7,7 +7,7 @@ class FaaSInterface(RunnerInterface):
     def get_name(self):
         return "faas"
 
-    def run_test_command(self, file_path, test_case_command):
+    def run_test_command(self, file_path, functionCall):
         # Implement the FaaS call here
         # For now, return a placeholder string
         return "FaaS output placeholder"
