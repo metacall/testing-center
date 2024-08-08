@@ -11,10 +11,10 @@ code-files:
   - path: random-password-generator-example/app.py
     test-cases:
       - name: Check the password is generated in the correct length
-        functionCall: getRandomPassword(12)
+        function-call: getRandomPassword(12)
         expected-pattern: '\"[\w\W]{12}\"'
       - name: Check the password is generated in the correct length
-        functionCall: getRandomPassword()
+        function-call: getRandomPassword()
         expected-pattern: 'missing 1 required positional argument'
 ``` 
 

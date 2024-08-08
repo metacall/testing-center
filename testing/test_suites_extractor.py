@@ -20,7 +20,7 @@ class TestSuitesExtractor:
             code_files = data['code-files']
             test_suites = []
             for code_file in code_files:
-                test_cases = [(test_case['name'], test_case['functionCall'], test_case['expected-pattern']) for test_case in code_file['test-cases']]
+                test_cases = [(test_case['name'], test_case['function-call'], test_case['expected-pattern']) for test_case in code_file['test-cases']]
                 test_suites.append((code_file['path'], test_cases))
         except KeyError as e:
             self.logger.error(f"Error: parsing yaml file, missing key:{e}")
