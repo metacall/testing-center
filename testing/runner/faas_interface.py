@@ -1,14 +1,19 @@
 import json
 import subprocess
 
-import config
+import os
 
 from testing.runner.runner_interface import RunnerInterface
 
 
 class FaaSInterface(RunnerInterface):
     def __init__(self):
-        self.base_url = "http://localhost:9000/9b150a863eeb"
+        try:
+            # Get the base URL from the environment variable SERVER_URL
+            self.base_url = os.environ['SERVER_URL']
+        except KeyError:
+            # If the environment variable is not set, return an error
+            raise KeyError("SERVER_URL environment variable not set, make sure to run 'source ./deploy.sh /path/to/repo' before running the tests")
 
     def get_name(self):
         return "faas"
@@ -41,7 +46,7 @@ class FaaSInterface(RunnerInterface):
     
     def run_test_command(self, file_path, function_call):
         function_name, params = self.parse_function_call(function_call)
-        url = f"{self.base_url}/{config.project_name}/v1/call/{function_name}"
+        url = f"{self.base_url}/call/{function_name}"
 
         if params:
             command = self.post_request(url, params)
