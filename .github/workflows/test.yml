@@ -7,8 +7,8 @@ on:
     branches:
       - main
 
-jobs:
-  Linux:
+jobs:  
+  Linux_cli:
     name: Linux - Ubuntu Run
     runs-on: ubuntu-latest
     steps:
@@ -36,9 +36,9 @@ jobs:
           
       - name: Run Tests Suits
         run: |
-          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V \;
+          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;
 
-  Windows:
+  Windows_cli:
     name: Windows Run
     runs-on: windows-latest
     steps:
@@ -74,7 +74,7 @@ jobs:
       - name: Run Test Suits
         shell: bash
         run: |
-          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V \;
+          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;
     
 
   # MacOS:
@@ -100,4 +100,4 @@ jobs:
           
   #     - name: Run Tests Suits
   #       run: |
-  #         find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V \;
+  #         find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;

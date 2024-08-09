@@ -5,14 +5,14 @@ code-files:
     path: examples/string-manipulation/str.rb
     test-cases:
       - name: Check the longest_repetition function
-        command: call longest_repetition("aaa")
+        function-call: longest_repetition("aaa")
         expected-pattern: "[ 'a', 3 ]"
       - name: Check the longest_repetition function with a different string
-        command: call longest_repetition("bbbaaabaaaa")
+        function-call: longest_repetition("bbbaaabaaaa")
         expected-pattern: "[ 'a', 4 ]"
       - name: Check the longest_repetition function with an empty string
-        command: call longest_repetition("")
-        expected-pattern: "NodeJS Loader could not convert the value of type 'Invalid' to N-API | [null, 0]"
+        function-call: longest_repetition("")
+        expected-pattern: "NodeJS Loader could not convert the value of type 'Invalid' to N-API || [null, 0]"
      
      
  

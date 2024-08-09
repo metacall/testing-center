@@ -5,9 +5,9 @@ from testing.logger import Logger
 
 class TestCaseGenerator:
     @staticmethod
-    def create_test_method(interface, test_case_name, test_case_command, test_case_expected_stdout):
+    def create_test_method(interface, test_case_name, function_call, test_case_expected_stdout):
         def test_method(self):
-            out_str = interface.run_test_command(self.file_path, test_case_command)
+            out_str = interface.run_test_command(self.file_path, function_call)
             passed = self.check_match(out_str, test_case_expected_stdout)
             self.assertTrue(passed, f"{interface.get_name()}_{test_case_name} - Expected: {test_case_expected_stdout}, Actual: {out_str}")
         return test_method
@@ -37,9 +37,9 @@ class DynamicTestSuiteFactory:
                 return TestCaseGenerator.check_match(actual, expected_pattern)
 
         for test_case in test_cases:
-            test_case_name, test_case_command, test_case_expected_stdout = test_case
+            test_case_name, function_call, test_case_expected_stdout = test_case
             for interface in self.interfaces:
-                test_method = TestCaseGenerator.create_test_method(interface, test_case_name, test_case_command, test_case_expected_stdout)
+                test_method = TestCaseGenerator.create_test_method(interface, test_case_name, function_call, test_case_expected_stdout)
                 test_method_name = f'testCase_{interface.get_name()}_{test_case_name}'
                 setattr(DynamicTestSuite, test_method_name, test_method)
 
@@ -61,7 +61,7 @@ class TestRunner:
             master_suite.addTests(test_loader.loadTestsFromTestCase(test_suite))
         return master_suite
 
-    def run_tests(self, project_name, test_suites):
+    def run_tests(self, test_suites):
         master_suite = self.create_project_test_suites(test_suites)
         runner = unittest.TextTestRunner(verbosity=self.test_verbosity)
         result = runner.run(master_suite)
