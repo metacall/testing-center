@@ -68,7 +68,7 @@ jobs:
           npm i -g @metacall/deploy
       - name: Verify MetaCall Deploy installation
         run: | 
-          metacall-deploy
+          metacall-deploy --version
           
       - name: Install Dependencies
         run: |
