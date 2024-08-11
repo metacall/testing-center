@@ -4,11 +4,13 @@ import subprocess
 import os
 
 from testing.runner.runner_interface import RunnerInterface
+from testing.logger import Logger
 
 
 class FaaSInterface(RunnerInterface):
     def __init__(self):
         try:
+            self.logger = Logger.get_instance()
             # Get the base URL from the environment variable SERVER_URL
             self.base_url = os.environ['SERVER_URL']
         except KeyError:
@@ -52,7 +54,8 @@ class FaaSInterface(RunnerInterface):
             command = self.post_request(url, params)
         else:
             command = self.get_request(url)
-        print("Command:", command)
+
+        self.logger.debug(f"Running command: {command}")
 
         result = subprocess.run(command, capture_output=True, text=True, shell=True, check=False)
         out_str = result.stdout.strip()

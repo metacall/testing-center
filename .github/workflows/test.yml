@@ -9,7 +9,7 @@ on:
 
 jobs:  
   Linux_cli:
-    name: Linux - Ubuntu Run
+    name: Linux - Ubuntu Run | CLI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,6 +37,56 @@ jobs:
       - name: Run Tests Suits
         run: |
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;
+
+  Linux_faas:
+    name: Linux - Ubuntu Run | FaaS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+          
+      - name: Install MetaCall
+        run: |
+          sudo apt update
+          curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
+      - name: Verify MetaCall installation
+        run: | 
+          metacall
+      
+      - name: Install MetaCall Deploy
+        run: |
+          npm i -g @metacall/deploy
+      - name: Verify MetaCall Deploy installation
+        run: | 
+          metacall-deploy
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Start FaaS Container in Background
+        run: |
+          docker run -d -p 9000:9000 --name faas_container metacall/faas
+
+      - name: deploy functions
+        run: |
+          git clone https://github.com/metacall/examples
+          . ./scripts/deploy.sh ./examples/time-app-web/
+
+      - name: Run Tests Suits
+        run: |
+           python ./testing.py -f test-suites/test-time-app-web.yaml -V -e faas;
 
   Windows_cli:
     name: Windows Run

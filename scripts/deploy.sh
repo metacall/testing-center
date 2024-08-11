@@ -3,6 +3,13 @@
 # Accept the repo path as an argument
 repo_path=$1
 
+# Set the environment variables
+export NODE_ENV=testing
+export METACALL_DEPLOY_INTERACTIVE=false
+
+# Run the metacall-deploy command with timeout 
+output=$(metacall-deploy --dev --workdir "$repo_path")
+
 # Run the metacall-deploy command and store the output
 output=$(metacall-deploy --inspect OpenAPIv3 --dev --workdir "$repo_path")
 
