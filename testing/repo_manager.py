@@ -3,9 +3,20 @@ import subprocess
 from testing.logger import Logger
 
 class RepoManager:
+    _instance = None
+
+    @staticmethod
+    def get_instance():
+        if RepoManager._instance is None:
+            RepoManager()
+        return RepoManager._instance
     def __init__(self, repo_url):
-        self.repo_url = repo_url
-        self.logger = Logger.get_instance()
+        if RepoManager._instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            RepoManager._instance = self
+            self.repo_url = repo_url
+            self.logger = Logger.get_instance()
 
     def clone_repo_if_not_exist(self):
         try:
