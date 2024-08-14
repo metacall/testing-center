@@ -64,13 +64,10 @@ jobs:
           pip install -r requirements.txt
         shell: bash
 
-      - name: Run FaaS in Background (FaaS only)
-        if: matrix.env == 'faas'
-        run: |
-          metacall-faas &
-        shell: bash
-
       - name: Run Test Suits
         run: |
+          if [ "${{ matrix.env }}" == "faas" ]; then
+            metacall-faas &
+          fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
         shell: bash
