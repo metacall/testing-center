@@ -79,16 +79,8 @@ jobs:
         run: |
           docker run -d -p 9000:9000 --name faas_container metacall/faas
 
-      - name: deploy faas
-        id: deploy-faas
-        run: |
-          git clone https://github.com/metacall/examples
-          . ./scripts/deploy.sh ./examples/time-app-web/
-          echo "SERVER_URL=$SERVER_URL" >> $GITHUB_ENV
-
       - name: Run Tests Suits
         run: |
-          export SERVER_URL=${{ env.SERVER_URL }}
           python ./testing.py -f test-suites/test-time-app-web.yaml -V -e faas;
 
   Windows_cli:

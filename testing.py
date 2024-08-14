@@ -4,6 +4,7 @@ import config
 
 from testing.logger import Logger
 from testing.repo_manager import RepoManager
+from testing.deploy_manager import DeployManager
 from testing.test_runner import TestRunner
 from testing.test_suites_extractor import TestSuitesExtractor
 
@@ -27,14 +28,19 @@ def main():
 
 
     test_suites_extractor = TestSuitesExtractor(test_suite_file_name)
-    project_name, repo_url, test_suites = test_suites_extractor.extract_test_suites()
-    config.project_name = project_name
-
-    logger.info(f"Project: {project_name}")
+    project_path, repo_url, test_suites = test_suites_extractor.extract_test_suites()
+    project_name = project_path.split('/')[-1]
+    logger.info(f"Testing Project: {project_name}")
                 
     repo_manager = RepoManager(repo_url)
     repo_manager.clone_repo_if_not_exist()
 
+    if "faas" in args.environments:
+        deploy_manager = DeployManager(project_path)
+        if deploy_manager.deploy_local_faas() == False:
+            logger.error("Error deploying the project, remove faas from the environments")
+            args.environments.remove("faas")
+            
     test_runner = TestRunner(args.environments)
     test_runner.run_tests(test_suites)
 
