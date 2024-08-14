@@ -28,18 +28,20 @@ jobs:
           python-version: ${{ matrix.pythonVersion }}
 
       - name: Install MetaCall (CLI only)
-        if: matrix.env == 'cli'
+        if: matrix.env == 'cli' && matrix.os == 'ubuntu-latest'
         run: |
-          if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
             sudo apt update
             curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
             metacall
-          else
-            powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
-            echo C:\Users\runneradmin\AppData\Local\MetaCall >> $env:GITHUB_PATH
-            metacall.bat
-          fi
         shell: bash
+
+      - name: Install MetaCall (CLI only)
+        if: matrix.env == 'cli' && matrix.os == 'windows-latest'
+        run: |
+          powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
+          echo C:\Users\runneradmin\AppData\Local\MetaCall >> $env:GITHUB_PATH
+          metacall.bat
+        shell: powershell
 
       - name: Set up Node.js
         if: matrix.env == 'faas'
@@ -53,16 +55,19 @@ jobs:
           npm i -g @metacall/deploy
           metacall-deploy --version 
 
+          npm i -g @metacall/faas
+          metacall-faas --version
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
         shell: bash
 
-      - name: Start FaaS Container in Background (FaaS only)
+      - name: Run FaaS in Background (FaaS only)
         if: matrix.env == 'faas'
         run: |
-          docker run -d -p 9000:9000 --name faas_container metacall/faas
+          metacall-faas &
         shell: bash
 
       - name: Run Test Suits
