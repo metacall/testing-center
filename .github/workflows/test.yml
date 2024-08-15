@@ -67,7 +67,7 @@ jobs:
       - name: Run Test Suits
         run: |
           if [ "${{ matrix.env }}" == "faas" && "${{ matrix.os }}" == "windows-latest" ]; then
-            sudo metacall-faas &
+            metacall-faas &
             sleep 5  # Wait for the server to start
           fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
