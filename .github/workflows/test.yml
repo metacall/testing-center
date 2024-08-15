@@ -37,8 +37,10 @@ jobs:
       - name: Install MetaCall (CLI only - Windows)
         if: matrix.env == 'cli' && matrix.os == 'windows-latest'
         run: |
+          Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/metacall/install/master/install.ps1' -OutFile install.ps1
           cmd.exe /c "powershell -NoProfile -ExecutionPolicy unrestricted ./install.ps1"
           metacall
+        shell: powershell
 
       - name: Set up Node.js
         if: matrix.env == 'faas'
