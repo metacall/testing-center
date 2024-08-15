@@ -1,7 +1,5 @@
 import argparse
 
-import config
-
 from testing.logger import Logger
 from testing.repo_manager import RepoManager
 from testing.deploy_manager import DeployManager

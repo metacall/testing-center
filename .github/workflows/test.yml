@@ -7,16 +7,18 @@ on:
     branches:
       - main
 
+env:
+  pythonVersion: 3.12
+  nodeVersion: 20
+
 jobs:
   test:
-    name: Test on ${{ matrix.os }} with ${{ matrix.env }}
+    name: Test ${{ matrix.env }} on ${{ matrix.os }} 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
         env: [cli, faas]
-        nodeVersion: [14] # For environments requiring Node.js
-        pythonVersion: [3.12] # For environments requiring Python
 
     steps:
       - name: Checkout code
@@ -25,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.pythonVersion }}
+          python-version: ${{ env.pythonVersion }}
 
       - name: Install MetaCall (CLI only - Ubuntu)
         if: matrix.env == 'cli' && matrix.os == 'ubuntu-latest'
@@ -45,7 +47,7 @@ jobs:
         if: matrix.env == 'faas'
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.nodeVersion }}
+          node-version: ${{ env.nodeVersion }}
 
       - name: Install MetaCall Deploy and FaaS (FaaS only)
         if: matrix.env == 'faas'
