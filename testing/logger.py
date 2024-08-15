@@ -11,7 +11,7 @@ class Logger:
 
     def __init__(self):
         if Logger._instance is not None:
-            raise Exception("This class is a singleton!")
+            raise SingletonException("This class is a singleton!")
         else:
             Logger._instance = self
             self.logger = logging.getLogger("CLI_Tool")

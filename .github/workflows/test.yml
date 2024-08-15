@@ -7,10 +7,17 @@ on:
     branches:
       - main
 
-jobs:  
-  Linux_cli:
-    name: Linux - Ubuntu Run
-    runs-on: ubuntu-latest
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} with ${{ matrix.env }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        env: [cli, faas]
+        nodeVersion: [14] # For environments requiring Node.js
+        pythonVersion: [3.12] # For environments requiring Python
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,86 +25,50 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          
-      - name: Install MetaCall
+          python-version: ${{ matrix.pythonVersion }}
+
+      - name: Install MetaCall (CLI only - Ubuntu)
+        if: matrix.env == 'cli' && matrix.os == 'ubuntu-latest'
         run: |
           sudo apt update
           curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
-
-      - name: Verify MetaCall installation
-        run: | 
           metacall
-          
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          
-      - name: Run Tests Suits
-        run: |
-          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;
 
-  Windows_cli:
-    name: Windows Run
-    runs-on: windows-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-  
-      - name: Install MetaCall
-        shell: powershell
+      - name: Install MetaCall (CLI only - Windows)
+        if: matrix.env == 'cli' && matrix.os == 'windows-latest'
         run: |
           powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
-            
-      - name: Add MetaCall to PATH
-        run: | 
           echo C:\Users\runneradmin\AppData\Local\MetaCall >> $env:GITHUB_PATH
         shell: powershell
-        
-      - name: Verify MetaCall installation
-        shell: powershell
-        run: | 
-          metacall.bat
+
+      - name: Set up Node.js
+        if: matrix.env == 'faas'
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.nodeVersion }}
+
+      - name: Install MetaCall Deploy and FaaS (FaaS only)
+        if: matrix.env == 'faas'
+        run: |
+          npm i -g @metacall/deploy @metacall/faas
+          metacall-deploy --version
+          metacall-faas --version
 
       - name: Install Dependencies
-        shell: bash
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Test Suits
-        shell: bash
+      - name: Start FaaS Service 
+        if: matrix.env == 'faas' && matrix.os == 'ubuntu-latest'
         run: |
-          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;
-    
+          docker run -d -p 9000:9000 --name faas_container metacall/faas
 
-  # MacOS:
-  #   name: MacOS Run
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: '3.12'
-      
-  #     - name: Install MetaCall
-  #       run: |
-  #         curl --insecure -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh -s -- --no-check-certificate --no-docker-fallback
-
-  #     - name: Install Dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.txt
-          
-  #     - name: Run Tests Suits
-  #       run: |
-  #         find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e cli \;
+      - name: Run Test Suits
+        run: |
+          if [ "${{ matrix.env }}" == "faas" && "${{ matrix.os }}" == "windows-latest" ]; then
+            metacall-faas &
+            sleep 5  # Wait for the server to start
+          fi
+          find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
+        shell: bash

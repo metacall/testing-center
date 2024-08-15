@@ -40,7 +40,7 @@ class DynamicTestSuiteFactory:
             test_case_name, function_call, test_case_expected_stdout = test_case
             for interface in self.interfaces:
                 test_method = TestCaseGenerator.create_test_method(interface, test_case_name, function_call, test_case_expected_stdout)
-                test_method_name = f'testCase_{interface.get_name()}_{test_case_name}'
+                test_method_name = f'testCase({interface.get_name()}): {test_case_name}'
                 setattr(DynamicTestSuite, test_method_name, test_method)
 
         return DynamicTestSuite
