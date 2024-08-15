@@ -32,16 +32,13 @@ jobs:
         run: |
           sudo apt update
           curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
-          echo "::add-path::/usr/local/bin/metacall"
           metacall
 
       - name: Install MetaCall (CLI only - Windows)
         if: matrix.env == 'cli' && matrix.os == 'windows-latest'
         run: |
-          powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
-          echo C:\Users\runneradmin\AppData\Local\MetaCall >> $env:GITHUB_PATH
-          metacall.bat
-        shell: powershell
+          cmd.exe /c "powershell -NoProfile -ExecutionPolicy unrestricted ./install.ps1"
+          metacall
 
       - name: Set up Node.js
         if: matrix.env == 'faas'
@@ -53,7 +50,6 @@ jobs:
         if: matrix.env == 'faas'
         run: |
           npm i -g @metacall/deploy @metacall/faas
-          echo "::add-path::$(npm bin)"
           metacall-deploy --version
           metacall-faas --version
 
