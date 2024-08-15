@@ -28,7 +28,10 @@ class CLIInterface(RunnerInterface):
         file_name = file_path.split('/')[-1]
         function_call = 'call ' + function_call
         try:
-            process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if platform.system() == 'Windows':
+                process = subprocess.Popen(['metacall.bat'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            else:
+                process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
             commands = ['load ' + ' ' + self.get_runtime_tag(file_name) + ' ' + file_path, function_call, 'exit']
             commands = '\n'.join(commands) + '\n' # join the commands with a newline character

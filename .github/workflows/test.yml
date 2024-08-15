@@ -37,9 +37,9 @@ jobs:
       - name: Install MetaCall (CLI only - Windows)
         if: matrix.env == 'cli' && matrix.os == 'windows-latest'
         run: |
-          Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/metacall/install/master/install.ps1' -OutFile install.ps1
-          cmd.exe /c "powershell -NoProfile -ExecutionPolicy unrestricted ./install.ps1"
-          metacall
+          powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
+          echo C:\Users\runneradmin\AppData\Local\MetaCall >> $env:GITHUB_PATH
+          metacall.bat
         shell: powershell
 
       - name: Set up Node.js
@@ -60,11 +60,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Start FaaS Service 
+        if: matrix.env == 'cli' && matrix.os == 'ubuntu-latest'
+        run: |
+          docker run -d -p 9000:9000 --name faas_container metacall/faas
+
       - name: Run Test Suits
         run: |
-          if [ "${{ matrix.env }}" == "faas" ]; then
+          if [ "${{ matrix.env }}" == "faas" && "${{ matrix.os }}" == "windows-latest" ]; then
             metacall-faas &
-            sleep 10  # Wait for the server to start
+            sleep 5  # Wait for the server to start
           fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
         shell: bash
