@@ -35,13 +35,13 @@ def main():
     repo_manager = RepoManager(repo_url)
     repo_manager.clone_repo_if_not_exist()
 
-    if "faas" in args.environments:
+    if "faas" in args.envs:
         deploy_manager = DeployManager(project_path)
         if deploy_manager.deploy_local_faas() == False:
-            logger.error("Error deploying the project, remove faas from the environments")
-            args.environments.remove("faas")
+            logger.error("Error deploying the project, remove faas from the envs")
+            args.envs.remove("faas")
             
-    test_runner = TestRunner(args.environments)
+    test_runner = TestRunner(args.envs)
     test_runner.run_tests(test_suites)
 
 if __name__ == "__main__":
