@@ -4,19 +4,20 @@ import subprocess
 import os
 
 from testing.runner.runner_interface import RunnerInterface
+from testing.logger import Logger
+from testing.deploy_manager import DeployManager
 
 
 class FaaSInterface(RunnerInterface):
     def __init__(self):
-        try:
-            # Get the base URL from the environment variable SERVER_URL
-            self.base_url = os.environ['SERVER_URL']
-        except KeyError:
-            # If the environment variable is not set, return an error
-            raise KeyError("SERVER_URL environment variable not set, make sure to run 'source ./deploy.sh /path/to/repo' before running the tests")
+        self.logger = Logger.get_instance()
+        self.deploy_manager = DeployManager.get_instance()
+        self.base_url = self.deploy_manager.get_local_base_url()
+        if not self.base_url:
+            self.logger.error("FaaSInterface: Could not get base url")
 
     def get_name(self):
-        return "faas"
+        return "faas"   
     
     def get_request(self, url):
         command = f"curl {url} -X GET"
@@ -29,9 +30,8 @@ class FaaSInterface(RunnerInterface):
             pass
 
         data = json.dumps(params) if isinstance(params, dict) else params
-        command = f"curl {url} -X POST --data '{data}'"
+        command = f"curl -X POST --data '{data}' {url} "
         return command
-
 
     def parse_function_call(self, function_call):
         if '(' in function_call and ')' in function_call:
@@ -43,16 +43,18 @@ class FaaSInterface(RunnerInterface):
             params = None
 
         return function_name, params
-    
-    def run_test_command(self, file_path, function_call):
+    def get_test_command(self, _, function_call):
         function_name, params = self.parse_function_call(function_call)
-        url = f"{self.base_url}/call/{function_name}"
+        url = f'{self.base_url}/call/{function_name}'
 
         if params:
-            command = self.post_request(url, params)
+           return self.post_request(url, params)
         else:
-            command = self.get_request(url)
-        print("Command:", command)
+            return self.get_request(url)
+
+    
+    def run_test_command(self, base_url, function_call):
+        command = self.get_test_command(base_url, function_call)
 
         result = subprocess.run(command, capture_output=True, text=True, shell=True, check=False)
         out_str = result.stdout.strip()
