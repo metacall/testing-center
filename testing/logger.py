@@ -1,17 +1,12 @@
 import logging
 
 class Logger:
+    ''' Singleton class to manage the logging '''
     _instance = None
-
-    @staticmethod
-    def get_instance():
-        if Logger._instance is None:
-            Logger()
-        return Logger._instance
 
     def __init__(self):
         if Logger._instance is not None:
-            raise SingletonException("This class is a singleton!")
+            raise Exception("This class is a singleton!")
         else:
             Logger._instance = self
             self.logger = logging.getLogger("CLI_Tool")
@@ -22,7 +17,15 @@ class Logger:
             self.logger.addHandler(handler)
             self.logger.setLevel(logging.INFO)
 
+    @staticmethod
+    def get_instance():
+        ''' Static access method for singleton '''
+        if Logger._instance is None:
+            Logger()
+        return Logger._instance
+    
     def set_level(self, level):
+        ''' Set the logging level '''
         level_map = {
             "DEBUG": logging.DEBUG,
             "INFO": logging.INFO,

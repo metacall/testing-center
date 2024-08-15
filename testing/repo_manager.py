@@ -3,13 +3,9 @@ import subprocess
 from testing.logger import Logger
 
 class RepoManager:
+    ''' Singleton class to manage the repos '''
     _instance = None
 
-    @staticmethod
-    def get_instance():
-        if RepoManager._instance is None:
-            RepoManager()
-        return RepoManager._instance
     def __init__(self, repo_url):
         if RepoManager._instance is not None:
             raise Exception("This class is a singleton!")
@@ -18,7 +14,15 @@ class RepoManager:
             self.repo_url = repo_url
             self.logger = Logger.get_instance()
 
+    @staticmethod
+    def get_instance():
+        ''' Static access method for singleton '''
+        if RepoManager._instance is None:
+            RepoManager(None)
+        return RepoManager._instance
+    
     def clone_repo_if_not_exist(self):
+        ''' Clone the repo if not already cloned '''
         try:
             repo_name = self.repo_url.split('/')[-1].split('.')[0]
             if os.path.isdir(repo_name):
@@ -33,4 +37,4 @@ class RepoManager:
                 self.logger.debug("Repo is cloned successfully!")
         except ValueError as e:
             self.logger.error(f"Error: {e}")
-            exit()
+            raise ValueError(f"Error: {e}")
