@@ -5,8 +5,10 @@ from testing.logger import Logger
 
 class CLIInterface(RunnerInterface):
     ''' Interface for the CLI runner '''
-    def __init__(self):
-        self.logger = Logger.get_instance()
+    
+    def __init__(self, logger=None):
+        self.logger = logger or Logger.get_instance()
+    
     def get_name(self):
         ''' Get the name of the interface '''
         return "cli"
@@ -32,24 +34,22 @@ class CLIInterface(RunnerInterface):
         file_name = file_path.split('/')[-1]
         function_call = 'call ' + function_call
         command = ['load ' + ' ' + self.get_runtime_tag(file_name) + ' ' + file_path, function_call, 'exit']
-        command = '\n'.join(command) + '\n' # join the commands with a newline character
-        return command
+        return '\n'.join(command) + '\n'  # join the commands with a newline character
     
     def run_test_command(self, file_path, function_call):
+        ''' Run the test command '''
         try:
-            if platform.system() == 'Windows':
-                process = subprocess.Popen(['metacall.bat'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            else:
-                process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            
             command = self.get_test_command(file_path, function_call)
+            
+            process_cmd = ['metacall.bat'] if platform.system() == 'Windows' else ['metacall']
+            process = subprocess.Popen(process_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
-            process.stdin.write(f"{command}".encode('utf-8'))
+            process.stdin.write(command.encode('utf-8'))
             process.stdin.flush()
             
             stdout, _ = process.communicate()
-            
             out_str = stdout.decode('utf-8').strip().split('\n>' if platform.system() == 'Windows' else 'λ')
+            
             return out_str[2]
         
         except subprocess.CalledProcessError as e:
