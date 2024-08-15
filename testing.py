@@ -13,7 +13,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", action="store", help="the test suite file name")
     parser.add_argument("-V", "--verbose", action="store_true", help="increase output verbosity")
-    parser.add_argument("-e", "--environments", nargs="+", default=["cli"], help="the environments to run the tests")
+    parser.add_argument("-e", "--envs", nargs="+", default=["cli"], help="the environments to run the tests")
     args = parser.parse_args()
 
     logger = Logger.get_instance()
