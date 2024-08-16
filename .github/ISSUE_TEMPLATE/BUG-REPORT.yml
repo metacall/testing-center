@@ -1,0 +1,67 @@
+name: "🐛 Bug Report"
+description: Create a new ticket for a bug in the MetaCall Test Center.
+title: "🐛 [BUG] - <title>"
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Provide a clear and detailed description of the issue you encountered.
+      placeholder: Briefly describe the issue...
+    validations:
+      required: true
+  - type: textarea
+    id: reprod
+    attributes:
+      label: "Reproduction Steps"
+      description: Provide a step-by-step description to reproduce the issue.
+      value: |
+        1. Clone the repository: `git clone <REPO_URL>`
+        2. Navigate to the project directory: `cd <PROJECT_DIRECTORY>`
+        3. Run the following command: `python3 ./testing.py -f <test-suite-file> -V -e <environment>`
+        4. Observe the error.
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: "Screenshots"
+      description: Attach screenshots that help illustrate the problem, if applicable.
+      value: |
+        ![DESCRIPTION](LINK.png)
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs"
+      description: Paste any relevant log output here. The logs will be automatically formatted as code.
+      render: bash
+    validations:
+      required: false
+  - type: dropdown
+    id: environments
+    attributes:
+      label: "Environments"
+      description: Which environments are impacted by the issue?
+      multiple: true
+      options:
+        - FaaS
+        - CLI
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: "Operating Systems"
+      description: Which operating systems are affected by the issue?
+      multiple: true
+      options:
+        - Windows
+        - Linux
+        - macOS
+    validations:
+      required: true
