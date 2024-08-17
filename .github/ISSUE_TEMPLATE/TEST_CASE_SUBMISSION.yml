@@ -1,0 +1,58 @@
+name: "🧪 New Test Case Submission"
+description: Use this template to submit a new test case for a project.
+title: "🧪 [TEST] - <Project Name>"
+labels: ["test", "enhancement"]
+body:
+  - type: input
+    id: project_name
+    attributes:
+      label: "Project Name"
+      description: "Enter the name of the project for which the test case is being submitted."
+      placeholder: "e.g., time-app-web"
+    validations:
+      required: true
+
+  - type: input
+    id: project_url
+    attributes:
+      label: "Project Repository URL"
+      description: "Provide the URL of the repository where the project is hosted."
+      placeholder: "https://github.com/USERNAME/REPO-NAME"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "Provide a brief description of the test case, including what it aims to validate."
+      placeholder: "Short and explicit description of your test case..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: test_cases
+    attributes:
+      label: "Test Cases"
+      description: |
+        Provide the test cases in the correct format as shown below. You can add multiple test cases by following the same structure.
+      placeholder: |
+        ```yaml
+        code-files:
+          - path: <path-to-code-file>
+            test-cases:
+              - name: <test-case-name>
+                function-call: <function-call>
+                expected-pattern: '<expected-output-pattern>'
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_notes
+    attributes:
+      label: "Additional Notes"
+      description: "Include any additional information or context that might be useful for reviewing or understanding the test case."
+      placeholder: "Any additional information or context..."
+    validations:
+      required: false

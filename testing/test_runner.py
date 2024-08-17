@@ -4,8 +4,10 @@ from testing.runner.interface_factory import InterfaceFactory
 from testing.logger import Logger
 
 class TestCaseGenerator:
+    ''' Class to generate test cases '''
     @staticmethod
     def create_test_method(interface, test_case_name, function_call, test_case_expected_stdout):
+        ''' Create a test method for the test case '''
         def test_method(self):
             out_str = interface.run_test_command(self.file_path, function_call)
             passed = self.check_match(out_str, test_case_expected_stdout)
@@ -14,19 +16,23 @@ class TestCaseGenerator:
 
     @staticmethod
     def check_match(actual, expected_pattern):
+        ''' Check if the actual output matches the expected pattern '''
         actual_cleaned = re.sub(r'\s+', ' ', actual).strip()
         expected_pattern_cleaned = re.sub(r'\s+', ' ', expected_pattern).strip()
         return bool(re.search(expected_pattern_cleaned, actual_cleaned, re.DOTALL))
 
 class DynamicTestSuiteFactory:
+    ''' Factory class to create dynamic test suites '''
     def __init__(self, logger, interfaces):
         self.logger = logger
         self.interfaces = interfaces
 
     def create_test_suite(self, file_path, test_cases):
+        ''' Create a dynamic test suite '''
         logger = self.logger
 
         class DynamicTestSuite(unittest.TestCase):
+            ''' Dynamic test suite class '''
             @classmethod
             def setUpClass(cls):
                 cls.file_path = file_path
@@ -34,6 +40,7 @@ class DynamicTestSuiteFactory:
 
             @staticmethod
             def check_match(actual, expected_pattern):
+                ''' Check if the actual output matches the expected pattern '''
                 return TestCaseGenerator.check_match(actual, expected_pattern)
 
         for test_case in test_cases:
@@ -46,6 +53,7 @@ class DynamicTestSuiteFactory:
         return DynamicTestSuite
 
 class TestRunner:
+    ''' Class to run the tests '''
     def __init__(self, interface_types):
         self.logger = Logger.get_instance()
         self.interfaces = [InterfaceFactory.get_interface(interface_type) for interface_type in interface_types]
@@ -53,6 +61,7 @@ class TestRunner:
         self.test_verbosity = 2 if self.logger.get_level() == "DEBUG" else 1
 
     def create_project_test_suites(self, test_suites):
+        ''' Create the project test suites '''
         test_loader = unittest.TestLoader()
         master_suite = unittest.TestSuite()
 
@@ -62,6 +71,7 @@ class TestRunner:
         return master_suite
 
     def run_tests(self, test_suites):
+        ''' Run the tests '''
         master_suite = self.create_project_test_suites(test_suites)
         runner = unittest.TextTestRunner(verbosity=self.test_verbosity)
         result = runner.run(master_suite)

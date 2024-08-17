@@ -4,12 +4,17 @@ from testing.runner.runner_interface import RunnerInterface
 from testing.logger import Logger
 
 class CLIInterface(RunnerInterface):
-    def __init__(self):
-        self.logger = Logger.get_instance()
+    ''' Interface for the CLI runner '''
+    
+    def __init__(self, logger=None):
+        self.logger = logger or Logger.get_instance()
+    
     def get_name(self):
+        ''' Get the name of the interface '''
         return "cli"
 
     def get_runtime_tag(self, file_name):
+        ''' Get the runtime tag for the file extension '''
         file_extension = file_name.split('.')[-1]
         runtime_tags = {
             'py': 'py',
@@ -24,26 +29,29 @@ class CLIInterface(RunnerInterface):
         else:
             raise ValueError("Error: file extension not supported!")
         
-    def run_test_command(self, file_path, function_call):
+    def get_test_command(self, file_path, function_call):
+        ''' Get the test command for the test case '''
         file_name = file_path.split('/')[-1]
         function_call = 'call ' + function_call
+        command = ['load ' + ' ' + self.get_runtime_tag(file_name) + ' ' + file_path, function_call, 'exit']
+        return '\n'.join(command) + '\n'  # join the commands with a newline character
+    
+    def run_test_command(self, file_path, function_call):
+        ''' Run the test command '''
         try:
-            if platform.system() == 'Windows':
-                process = subprocess.Popen(['metacall.bat'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            else:
-                process = subprocess.Popen(['metacall'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            command = self.get_test_command(file_path, function_call)
             
-            commands = ['load ' + ' ' + self.get_runtime_tag(file_name) + ' ' + file_path, function_call, 'exit']
-            commands = '\n'.join(commands) + '\n' # join the commands with a newline character
+            process_cmd = ['metacall.bat'] if platform.system() == 'Windows' else ['metacall']
+            process = subprocess.Popen(process_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
-            process.stdin.write(f"{commands}".encode('utf-8'))
+            process.stdin.write(command.encode('utf-8'))
             process.stdin.flush()
             
             stdout, _ = process.communicate()
-            
             out_str = stdout.decode('utf-8').strip().split('\n>' if platform.system() == 'Windows' else 'λ')
+            
             return out_str[2]
         
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Error: {e}")
-            return ""
+            return None

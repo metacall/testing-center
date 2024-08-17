@@ -1,0 +1,85 @@
+name: "💡 Feature Request"
+description: Suggest a new feature or enhancement for the MetaCall Test Center.
+title: "💡 [REQUEST] - <title>"
+labels: ["enhancement", "discussion"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: Provide a brief overview of the proposed feature or enhancement.
+      placeholder: Describe your feature request in a few lines...
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "Motivation"
+      description: Explain the problem that this feature would solve and why it is important.
+      placeholder: Describe the problem your feature request will address...
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: "Proposed Solution"
+      description: Describe how you propose to implement this feature.
+      placeholder: Outline your solution in detail...
+    validations:
+      required: true
+  - type: textarea
+    id: basic_example
+    attributes:
+      label: "Basic Example"
+      description: Provide a basic example or use case that demonstrates how the feature would work.
+      placeholder: Provide code snippets or examples...
+    validations:
+      required: true
+  - type: textarea
+    id: drawbacks
+    attributes:
+      label: "Drawbacks"
+      description: What are the potential drawbacks or challenges associated with this feature?
+      placeholder: Identify possible negative impacts or challenges...
+    validations:
+      required: true
+  - type: textarea
+    id: unresolved_questions
+    attributes:
+      label: "Unresolved Questions"
+      description: List any unresolved questions or concerns related to this feature.
+      placeholder: Mention any uncertainties or areas needing further discussion...
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives Considered"
+      description: Describe any alternative approaches or solutions you considered.
+      placeholder: Discuss other ways this problem could be addressed...
+    validations:
+      required: false
+  - type: input
+    id: start_date
+    attributes:
+      label: "Proposed Start Date"
+      description: When do you plan to start working on this feature?
+      placeholder: "MM/DD/YYYY"
+    validations:
+      required: false
+  - type: textarea
+    id: reference_issues
+    attributes:
+      label: "Related Issues"
+      description: List any related issues or discussions.
+      placeholder: Reference existing issues or discussions (#Issue IDs)...
+    validations:
+      required: false
+  - type: textarea
+    id: implementation_pr
+    attributes:
+      label: "Implementation PR"
+      description: Link to the pull request where this feature is being implemented, if applicable.
+      placeholder: "#Pull Request ID"
+    validations:
+      required: false
