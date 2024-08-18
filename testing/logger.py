@@ -39,17 +39,17 @@ class Logger:
     def get_level(self):
         return self.level
 
-    def debug(self, msg):
-        self.logger.debug(msg)
+    def debug(self, msg, *args, **kwargs):
+        self.logger.debug('\033[94m' + msg + '\033[0m', *args, **kwargs)
 
-    def info(self, msg):
-        self.logger.info(msg)
+    def info(self, msg, *args, **kwargs):
+        self.logger.info('\033[92m' + msg + '\033[0m', *args, **kwargs)
 
-    def warning(self, msg):
-        self.logger.warning(msg)
+    def warning(self, msg, *args, **kwargs):
+        self.logger.warning('\033[93m' + msg + '\033[0m', *args, **kwargs)
 
-    def error(self, msg):
-        self.logger.error(msg)
+    def error(self, msg, *args, **kwargs):
+        self.logger.error('\033[91m' + msg + '\033[0m', *args, **kwargs)
 
-    def critical(self, msg):
-        self.logger.critical(msg)
+    def critical(self, msg, *args, **kwargs):
+        self.logger.critical('\033[95m' + msg + '\033[0m', *args, **kwargs)
