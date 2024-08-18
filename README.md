@@ -151,7 +151,22 @@ To keep the project organized and maintain a clear history, we ask that all cont
 - **Explain Your Changes**: Clearly explain the motivation and context for your changes in the pull request description.
 - **Run Tests**: Ensure that all tests pass locally before submitting your pull request.
 
-### Guidelines
+To ensure code quality and consistency, please follow these guidelines:
+
+1. **Linter**: Run `flake8` to check for style violations.
+    ```bash
+    flake8 .
+    ```
+
+2. **Formatter**: Format your code using `black`.
+    ```bash
+    black .
+    ```
+
+3. **Pull Requests**: Before submitting a pull request, ensure that your code passes the linter and formatter checks. The CI pipeline will automatically run these checks on your PR.
+  
+
+### General Guidelines
 
 - Follow the existing code style and structure.
 - Ensure that all tests pass before submitting a pull request.

@@ -12,7 +12,3 @@ code-files:
       - name: Check index.html is fully returned
         function-call: index()
         expected-pattern: '<html>[\w\W]*</html>'
-     
- 
-      
-      
