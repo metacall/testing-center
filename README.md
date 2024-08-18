@@ -1,5 +1,7 @@
 # MetaCall Test Center
 
+![Python](https://img.shields.io/badge/python-3.12-blue.svg)
+
 ## Overview
 
 MetaCall Test Center is a comprehensive testing framework designed for MetaCall projects and examples. It provides a structured and efficient way to define, run, and manage test cases across different environments. The primary script, `testing.py`, integrates seamlessly into CI/CD pipelines and supports local testing. This project adheres to best practices, SOLID principles, and design patterns to ensure maintainability, scalability, and ease of contribution.
@@ -126,9 +128,49 @@ We welcome contributions to the MetaCall Test Center! Here are a few ways you ca
 - **Extend Functionality**: Implement support for additional environments or enhance existing ones.
 - **Documentation**: Improve and expand the documentation to help new users and contributors.
 
-### Guidelines
+To keep the project organized and maintain a clear history, we ask that all contributors follow these guidelines:
+
+### Contribution Process
+
+1. **Fork the Repository**: Create a fork of the repository and make your changes in a new branch.
+2. **Write Clear Commit Messages**: Use clear and descriptive commit messages that explain the changes you are making.
+3. **Update the Changelog**: 
+    - Before submitting a pull request, make sure to update the `CHANGELOG.md` file.
+    - Add your changes under the `Unreleased` section, categorizing them under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, or `Security`.
+    - Use bullet points to list your changes and include references to related issue numbers if applicable.
+4. **Submit a Pull Request**: After making your changes and updating the changelog, submit a pull request. Make sure your pull request includes a description of the changes and why they are necessary.
+
+### Changelog Format
+
+- **Unreleased**: Add any new changes here before a version is released.
+- **Version Tags**: When a new version is released, create a new section in the changelog with the version number and date.
+
+### Commit and Pull Request Tips
+
+- **Keep it Simple**: Make small, focused commits and pull requests that address one issue or feature at a time.
+- **Explain Your Changes**: Clearly explain the motivation and context for your changes in the pull request description.
+- **Run Tests**: Ensure that all tests pass locally before submitting your pull request.
+
+To ensure code quality and consistency, please follow these guidelines:
+
+1. **Linter**: Run `flake8` to check for style violations.
+    ```bash
+    flake8 .
+    ```
+
+2. **Formatter**: Format your code using `black`.
+    ```bash
+    black .
+    ```
+
+3. **Pull Requests**: Before submitting a pull request, ensure that your code passes the linter and formatter checks. The CI pipeline will automatically run these checks on your PR.
+  
+
+### General Guidelines
 
 - Follow the existing code style and structure.
 - Ensure that all tests pass before submitting a pull request.
 - Provide clear and concise commit messages.
 - Open an issue to discuss potential changes before submitting significant modifications.
+
+Thank you for contributing to this project! Your efforts help make this project better for everyone.
