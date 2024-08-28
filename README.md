@@ -4,7 +4,7 @@
 
 ## Overview
 
-MetaCall Test Center is a comprehensive testing framework designed for MetaCall projects and examples. It provides a structured and efficient way to define, run, and manage test cases across different environments. The primary script, `testing.py`, integrates seamlessly into CI/CD pipelines and supports local testing. This project adheres to best practices, SOLID principles, and design patterns to ensure maintainability, scalability, and ease of contribution.
+MetaCall Test Center is a comprehensive testing framework designed for MetaCall projects and examples. It provides a structured and efficient way to define, run, and manage test cases across different environments. The primary script, `testing.py`, integrates seamlessly into CI/CD pipelines and supports local testing. This project was a Google Summer of Code idea for GSoC 2024 and it adheres to best practices, SOLID principles, and design patterns to ensure maintainability, scalability, and ease of contribution.
 
 ## Project Structure
 
