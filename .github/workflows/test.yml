@@ -8,8 +8,8 @@ on:
       - master
 
 env:
-  pythonVersion: 3.12
-  nodeVersion: 20
+  PYTHON_VERSION: 3.12
+  NODE_VERSION: 20
 
 jobs:
   test:
@@ -27,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.pythonVersion }}
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install MetaCall (CLI only - Ubuntu)
         if: matrix.env == 'cli' && matrix.os == 'ubuntu-latest'
@@ -47,7 +47,7 @@ jobs:
         if: matrix.env == 'faas'
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.nodeVersion }}
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install MetaCall Deploy and FaaS (FaaS only)
         if: matrix.env == 'faas'
