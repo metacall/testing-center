@@ -12,8 +12,8 @@ env:
 
 jobs:
   lint-and-format:
+    name: Lint and Format
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out the code
         uses: actions/checkout@v2
@@ -24,10 +24,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: |
-            pip install flake8 black
-            apt install flake8
-            apt install black
+        run: pip install flake8 black
               
       - name: Run flake8
         run: flake8 .
