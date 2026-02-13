@@ -9,7 +9,6 @@ on:
 
 env:
   PYTHON_VERSION: 3.12
-  NODE_VERSION: 20
 
 jobs:
   test:
@@ -18,7 +17,7 @@ jobs:
     strategy:
       matrix:
         env: [cli, faas]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-14, macos-15, macos-15-intel]
 
     steps:
       - name: Checkout code
@@ -29,50 +28,27 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install MetaCall (CLI only - Unix)
-        if: matrix.env == 'cli' && matrix.os != 'windows-latest'
-        run: |
-          if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-            sudo apt update
-          fi
-          curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
-          metacall
+      - name: Install MetaCall (Unix)
+        if: matrix.os != 'windows-latest'
+        run: curl -sL https://raw.githubusercontent.com/metacall/install/master/install.sh | sh
 
-      - name: Install MetaCall (CLI only - Windows)
-        if: matrix.env == 'cli' && matrix.os == 'windows-latest'
+      - name: Install MetaCall (Windows)
+        if: matrix.os == 'windows-latest'
         run: |
           powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/metacall/install/master/install.ps1')))"
           echo C:\Users\runneradmin\AppData\Local\MetaCall >> $env:GITHUB_PATH
         shell: powershell
-
-      - name: Set up Node.js
-        if: matrix.env == 'faas'
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install MetaCall Deploy and FaaS (FaaS only)
-        if: matrix.env == 'faas'
-        run: |
-          npm i -g @metacall/deploy @metacall/faas
-          metacall-deploy --version
-          metacall-faas --version
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Start FaaS Service 
-        if: matrix.env == 'faas' && matrix.os == 'ubuntu-latest'
-        run: |
-          docker run -d -p 9000:9000 --name faas_container metacall/faas
-
       - name: Run Test Suits
+        shell: bash
         run: |
-          if [ "${{ matrix.env }}" == "faas" && "${{ matrix.os }}" == "windows-latest" ]; then
-            metacall-faas &
+          if [ "${{ matrix.env }}" == "faas" ]; then
+            metacall faas &
             sleep 5  # Wait for the server to start
           fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
-        shell: bash
