@@ -45,7 +45,7 @@ class DeployManager:
             return False
 
         try:
-            deploy_command = f"metacall-deploy --dev --workdir {self.project_path}"
+            deploy_command = f"metacall deploy --dev --workdir {self.project_path}"
             subprocess.run(
                 deploy_command, capture_output=True, text=True, shell=True, check=True
             )
@@ -57,7 +57,7 @@ class DeployManager:
 
     def get_local_base_url(self):
         """Get the base URL of the deployed local FaaS"""
-        inspection_command = "metacall-deploy --inspect OpenAPIv3 --dev"
+        inspection_command = "metacall deploy --inspect OpenAPIv3 --dev"
         try:
             result = subprocess.run(
                 inspection_command,
