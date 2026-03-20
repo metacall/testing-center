@@ -51,7 +51,7 @@ class Logger:
         self.logger.warning("\033[93m" + msg + "\033[0m", *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-        self.logger.error("\033[91m" + msg + "\033[0m", *args, **kwargs)
+        self.logger.error("\033[91m" + str(msg) + "\033[0m", *args, **kwargs)
 
     def critical(self, msg, *args, **kwargs):
         self.logger.critical("\033[95m" + msg + "\033[0m", *args, **kwargs)
