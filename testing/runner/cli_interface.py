@@ -63,7 +63,7 @@ class CLIInterface(RunnerInterface):
             out_str = (
                 stdout.decode("utf-8")
                 .strip()
-                .split("\n>" if platform.system() == "Windows" else "λ")
+                .split("λ")
             )
 
             return out_str[2]

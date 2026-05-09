@@ -66,7 +66,15 @@ class DeployManager:
                 shell=True,
                 check=True,
             )
-            server_url = json.loads(result.stdout)[0]["servers"][0]["url"]
+            # On Windows, metacall.bat may echo the batch command before
+            # the JSON output, so we extract just the JSON portion
+            stdout = result.stdout
+            json_start = stdout.find("[")
+            if json_start == -1:
+                json_start = stdout.find("{")
+            if json_start != -1:
+                stdout = stdout[json_start:]
+            server_url = json.loads(stdout)[0]["servers"][0]["url"]
             self.logger.debug(f"Local FaaS base URL: {server_url}")
             return server_url
         except subprocess.CalledProcessError as e:
