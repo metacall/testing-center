@@ -50,14 +50,19 @@ jobs:
         run: |
           if [ "${{ matrix.env }}" == "faas" ]; then
             metacall faas &
-            sleep 5  # Wait for the server to start
+            sleep 10  # Wait for the server to start
           fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
 
       - name: Run Test Suite (Windows)
         if: matrix.os == 'windows-latest'
         shell: powershell
-        env:
-          MATRIX_ENV: ${{ matrix.env }}
         run: |
-          python testing.py -f test-suites/test-time-app-web.yaml -V -e $env:MATRIX_ENV
+          if ("${{ matrix.env }}" -eq "faas") {
+            Start-Process -FilePath "metacall" -ArgumentList "faas"
+            Start-Sleep -Seconds 10  # Wait for the server to start
+          }
+
+          Get-ChildItem -Path "test-suites" -Recurse -Filter "*.yaml" | ForEach-Object {
+            python ./testing.py -f $_.FullName -V -e "${{ matrix.env }}"
+          }
