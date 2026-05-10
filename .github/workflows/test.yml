@@ -44,7 +44,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Test Suits
+      - name: Run Test Suites (Non-Windows)
+        if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           if [ "${{ matrix.env }}" == "faas" ]; then
@@ -52,3 +53,11 @@ jobs:
             sleep 5  # Wait for the server to start
           fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
+
+      - name: Run Test Suite (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        env:
+          MATRIX_ENV: ${{ matrix.env }}
+        run: |
+          python testing.py -f test-suites/test-time-app-web.yaml -V -e $env:MATRIX_ENV
