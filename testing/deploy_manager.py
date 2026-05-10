@@ -77,17 +77,45 @@ class DeployManager:
             # On Windows, metacall.bat may echo the batch command before
             # the JSON output, so we extract just the JSON portion
             stdout = result.stdout
+            self.logger.debug(f"Inspect stdout (raw): {stdout}")
             json_start = stdout.find("[")
             if json_start == -1:
                 json_start = stdout.find("{")
+            self.logger.debug(f"Inspect stdout json_start: {json_start}")
             if json_start != -1:
                 stdout = stdout[json_start:]
-            server_url = json.loads(stdout)[0]["servers"][0]["url"]
+            self.logger.debug(f"Inspect stdout (extracted): {stdout}")
+            parsed = json.loads(stdout)
+            self.logger.debug(f"Inspect JSON (parsed): {parsed}")
+            if not isinstance(parsed, list) or not parsed:
+                self.logger.error(
+                    "Unexpected JSON structure: expected non-empty list."
+                )
+                return None
+            first_entry = parsed[0]
+            if not isinstance(first_entry, dict):
+                self.logger.error(
+                    "Unexpected JSON structure: list item is not an object."
+                )
+                return None
+            servers = first_entry.get("servers")
+            if not isinstance(servers, list) or not servers:
+                self.logger.error(
+                    "Unexpected JSON structure: missing servers list."
+                )
+                return None
+            first_server = servers[0]
+            if not isinstance(first_server, dict) or "url" not in first_server:
+                self.logger.error(
+                    "Unexpected JSON structure: missing servers[0].url."
+                )
+                return None
+            server_url = first_server["url"]
             self.logger.debug(f"Local FaaS base URL: {server_url}")
             return server_url
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Error inspecting the deployed project: {e}")
-        except (json.JSONDecodeError, KeyError) as e:
+        except (json.JSONDecodeError, KeyError, IndexError) as e:
             self.logger.error(f"Error parsing JSON output: {e}")
         return None
 
