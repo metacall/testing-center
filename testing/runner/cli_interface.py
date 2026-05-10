@@ -39,7 +39,7 @@ class CLIInterface(RunnerInterface):
             function_call,
             "exit",
         ]
-        return "\n".join(command) + "\n"  # join the commands with a newline character
+        return "\n".join(command) + "\n"
 
     def run_test_command(self, file_path, function_call):
         """Run the test command"""
@@ -47,7 +47,9 @@ class CLIInterface(RunnerInterface):
             command = self.get_test_command(file_path, function_call)
 
             process_cmd = (
-                ["metacall.bat"] if platform.system() == "Windows" else ["metacall"]
+                ["metacall.bat"]
+                if platform.system() == "Windows"
+                else ["metacall"]
             )
             process = subprocess.Popen(
                 process_cmd,
@@ -60,11 +62,7 @@ class CLIInterface(RunnerInterface):
             process.stdin.flush()
 
             stdout, _ = process.communicate()
-            out_str = (
-                stdout.decode("utf-8")
-                .strip()
-                .split("λ")
-            )
+            out_str = stdout.decode("utf-8").strip().split("λ")
 
             return out_str[2]
 

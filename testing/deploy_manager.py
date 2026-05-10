@@ -39,15 +39,23 @@ class DeployManager:
 
     def deploy_local_faas(self):
         """Deploy the project as a local FaaS"""
-        env_vars = {"NODE_ENV": "testing", "METACALL_DEPLOY_INTERACTIVE": "false"}
+        env_vars = {
+            "NODE_ENV": "testing",
+            "METACALL_DEPLOY_INTERACTIVE": "false",
+        }
 
         if not self.set_environment_variables(env_vars):
             return False
 
         try:
-            deploy_command = f"metacall deploy --dev --workdir {self.project_path}"
+            base_command = "metacall deploy --dev --workdir "
+            deploy_command = base_command + self.project_path
             subprocess.run(
-                deploy_command, capture_output=True, text=True, shell=True, check=True
+                deploy_command,
+                capture_output=True,
+                text=True,
+                shell=True,
+                check=True,
             )
             self.logger.debug("Local FaaS deployed successfully.")
             return True
