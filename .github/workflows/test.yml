@@ -45,10 +45,24 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Test Suits
+        if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           if [ "${{ matrix.env }}" == "faas" ]; then
             metacall faas &
-            sleep 5  # Wait for the server to start
+            sleep 10  # Wait for the server to start
           fi
           find test-suites -type f -name "*.yaml" -exec python ./testing.py -f {} -V -e ${{ matrix.env }} \;
+
+      - name: Run Test Suite (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          if ("${{ matrix.env }}" -eq "faas") {
+            Start-Process -FilePath "metacall" -ArgumentList "faas"
+            Start-Sleep -Seconds 10  # Wait for the server to start
+          }
+
+          Get-ChildItem -Path "test-suites" -Recurse -Filter "*.yaml" | ForEach-Object {
+            python ./testing.py -f $_.FullName -V -e "${{ matrix.env }}"
+          }
