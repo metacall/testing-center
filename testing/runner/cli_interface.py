@@ -46,11 +46,10 @@ class CLIInterface(RunnerInterface):
         try:
             command = self.get_test_command(file_path, function_call)
 
-            process_cmd = (
-                ["metacall.bat"]
-                if platform.system() == "Windows"
-                else ["metacall"]
-            )
+            if platform.system() == "Windows":
+                process_cmd = ["metacall.bat"]
+            else:
+                process_cmd = ["metacall"]
             process = subprocess.Popen(
                 process_cmd,
                 stdin=subprocess.PIPE,

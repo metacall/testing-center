@@ -66,7 +66,7 @@ jobs:
         run: |
           if ("${{ matrix.env }}" -eq "faas") {
             Start-Process -FilePath "metacall" -ArgumentList "faas"
-            Start-Sleep -Seconds 10  # Wait for the server to start
+            Start-Sleep -Seconds 30  # Wait for the server to start
           }
 
           Get-ChildItem -Path "test-suites" -Recurse -Filter "*.yaml" | ForEach-Object {
