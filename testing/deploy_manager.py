@@ -67,7 +67,7 @@ class DeployManager:
     def get_local_base_url(self):
         """Get the base URL of the deployed local FaaS"""
         inspection_command = "metacall deploy --inspect OpenAPIv3 --dev"
-        max_retries = 5
+        max_retries = 20
         for attempt in range(1, max_retries + 1):
             try:
                 result = subprocess.run(
@@ -79,7 +79,7 @@ class DeployManager:
                 )
             except subprocess.CalledProcessError as e:
                 self.logger.error("Error inspecting deployed project: %s" % e)
-                time.sleep(2)
+                time.sleep(10)
                 continue
 
             # On Windows, metacall.bat may echo the batch command before
@@ -98,28 +98,28 @@ class DeployManager:
                 parsed = json.loads(stdout)
             except (json.JSONDecodeError, KeyError, IndexError) as e:
                 self.logger.error(f"Error parsing JSON output: {e}")
-                time.sleep(2)
+                time.sleep(10)
                 continue
 
             self.logger.debug(f"Inspect JSON (parsed): {parsed}")
             if not isinstance(parsed, list) or not parsed:
                 self.logger.error("Unexpected JSON: empty list.")
-                time.sleep(2)
+                time.sleep(10)
                 continue
             first_entry = parsed[0]
             if not isinstance(first_entry, dict):
                 self.logger.error("Unexpected JSON: item is not an object.")
-                time.sleep(2)
+                time.sleep(10)
                 continue
             servers = first_entry.get("servers")
             if not isinstance(servers, list) or not servers:
                 self.logger.error("Unexpected JSON: missing servers list.")
-                time.sleep(2)
+                time.sleep(10)
                 continue
             first_server = servers[0]
             if not isinstance(first_server, dict) or "url" not in first_server:
                 self.logger.error("Unexpected JSON: missing servers[0].url.")
-                time.sleep(2)
+                time.sleep(10)
                 continue
             server_url = first_server["url"]
             self.logger.debug(f"Local FaaS base URL: {server_url}")
