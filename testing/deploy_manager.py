@@ -48,21 +48,58 @@ class DeployManager:
         if not self.set_environment_variables(env_vars):
             return False
 
-        try:
-            base_command = "metacall deploy --dev --workdir "
-            deploy_command = base_command + self.project_path
-            subprocess.run(
-                deploy_command,
-                capture_output=True,
-                text=True,
-                shell=True,
-                check=True,
-            )
-            self.logger.debug("Local FaaS deployed successfully.")
-            return True
-        except subprocess.CalledProcessError as e:
-            self.logger.error(f"Error deploying the project: {e}")
-            return False
+        base_command = "metacall deploy --dev --workdir "
+        deploy_command = base_command + self.project_path
+        inspection_command = "metacall deploy --inspect OpenAPIv3 --dev"
+        max_retries = 3
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                subprocess.run(
+                    deploy_command,
+                    capture_output=True,
+                    text=True,
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Error deploying the project: {e}")
+                time.sleep(10)
+                continue
+
+            try:
+                result = subprocess.run(
+                    inspection_command,
+                    capture_output=True,
+                    text=True,
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as e:
+                self.logger.error("Error inspecting deploy: %s" % e)
+                time.sleep(10)
+                continue
+
+            stdout = result.stdout
+            json_start = stdout.find("[")
+            if json_start == -1:
+                json_start = stdout.find("{")
+            if json_start != -1:
+                stdout = stdout[json_start:]
+            try:
+                parsed = json.loads(stdout)
+            except (json.JSONDecodeError, KeyError, IndexError) as e:
+                self.logger.error(f"Error parsing JSON output: {e}")
+                time.sleep(10)
+                continue
+            if isinstance(parsed, list) and parsed:
+                self.logger.debug("Local FaaS deployed successfully.")
+                return True
+
+            self.logger.error("Deploy inspection returned empty result.")
+            time.sleep(10)
+
+        return False
 
     def get_local_base_url(self):
         """Get the base URL of the deployed local FaaS"""
