@@ -2,6 +2,7 @@ import os
 import subprocess
 import json
 import time
+import platform
 from testing.logger import Logger
 
 
@@ -38,6 +39,15 @@ class DeployManager:
             return False
         return True
 
+    def _run_command(self, command):
+        return subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            shell=True,
+            check=True,
+        )
+
     def deploy_local_faas(self):
         """Deploy the project as a local FaaS"""
         env_vars = {
@@ -55,37 +65,24 @@ class DeployManager:
 
         for attempt in range(1, max_retries + 1):
             try:
-                subprocess.run(
-                    deploy_command,
-                    capture_output=True,
-                    text=True,
-                    shell=True,
-                    check=True,
-                )
+                self._run_command(deploy_command)
             except subprocess.CalledProcessError as e:
                 self.logger.error(f"Error deploying the project: {e}")
                 time.sleep(10)
                 continue
 
             try:
-                result = subprocess.run(
-                    inspection_command,
-                    capture_output=True,
-                    text=True,
-                    shell=True,
-                    check=True,
-                )
+                result = self._run_command(inspection_command)
             except subprocess.CalledProcessError as e:
                 self.logger.error("Error inspecting deploy: %s" % e)
                 time.sleep(10)
                 continue
 
             stdout = result.stdout
-            json_start = stdout.find("[")
-            if json_start == -1:
-                json_start = stdout.find("{")
-            if json_start != -1:
-                stdout = stdout[json_start:]
+            if platform.system() == "Windows":
+                # metacall.bat echoes the command line before JSON output.
+                stdout_lines = stdout.splitlines()
+                stdout = "\n".join(stdout_lines[1:]) if stdout_lines else ""
             try:
                 parsed = json.loads(stdout)
             except (json.JSONDecodeError, KeyError, IndexError) as e:
@@ -107,28 +104,18 @@ class DeployManager:
         max_retries = 20
         for attempt in range(1, max_retries + 1):
             try:
-                result = subprocess.run(
-                    inspection_command,
-                    capture_output=True,
-                    text=True,
-                    shell=True,
-                    check=True,
-                )
+                result = self._run_command(inspection_command)
             except subprocess.CalledProcessError as e:
                 self.logger.error("Error inspecting deployed project: %s" % e)
                 time.sleep(10)
                 continue
 
-            # On Windows, metacall.bat may echo the batch command before
-            # the JSON output, so we extract just the JSON portion
             stdout = result.stdout
             self.logger.debug(f"Inspect stdout (raw): {stdout}")
-            json_start = stdout.find("[")
-            if json_start == -1:
-                json_start = stdout.find("{")
-            self.logger.debug(f"Inspect stdout json_start: {json_start}")
-            if json_start != -1:
-                stdout = stdout[json_start:]
+            if platform.system() == "Windows":
+                # metacall.bat echoes the command line before JSON output.
+                stdout_lines = stdout.splitlines()
+                stdout = "\n".join(stdout_lines[1:]) if stdout_lines else ""
             self.logger.debug(f"Inspect stdout (extracted): {stdout}")
 
             try:
