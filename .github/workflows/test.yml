@@ -9,6 +9,7 @@ on:
 
 env:
   PYTHON_VERSION: 3.12
+  NODE_VERSION: 24
 
 jobs:
   test:
@@ -27,6 +28,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install MetaCall (Unix)
         if: matrix.os != 'windows-latest'
@@ -60,7 +66,7 @@ jobs:
         run: |
           if ("${{ matrix.env }}" -eq "faas") {
             Start-Process -FilePath "metacall" -ArgumentList "faas"
-            Start-Sleep -Seconds 10  # Wait for the server to start
+            Start-Sleep -Seconds 30  # Wait for the server to start
           }
 
           Get-ChildItem -Path "test-suites" -Recurse -Filter "*.yaml" | ForEach-Object {
