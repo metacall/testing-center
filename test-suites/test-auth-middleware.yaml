@@ -1,0 +1,14 @@
+project: auth-middleware
+repo-url: https://github.com/metacall/examples
+code-files:
+  - path: examples/auth-middleware/middleware.js
+    test-cases:
+      - name: Check signin returns a JWT token
+        function-call: 'signin("viferga", "123")'
+        expected-pattern: 'eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'
+      - name: Check reverse rejects an invalid token
+        function-call: 'reverse("invalid-token", {"str": "hello"})'
+        expected-pattern: 'jwt malformed'
+      - name: Check sum rejects an invalid token
+        function-call: 'sum("invalid-token", {"a": 1, "b": 2})'
+        expected-pattern: 'jwt malformed'
