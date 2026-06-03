@@ -1,0 +1,11 @@
+project: auth-function-mesh
+repo-url: https://github.com/metacall/examples
+code-files:
+  - path: examples/auth-function-mesh/auth.py
+    test-cases:
+      - name: Check encrypt returns a JWT token
+        function-call: 'encrypt("asd")'
+        expected-pattern: 'eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'
+      - name: Check decrypt returns original text
+        function-call: 'decrypt(encrypt("asd"))'
+        expected-pattern: 'asd'
