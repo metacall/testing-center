@@ -1,0 +1,11 @@
+project: string-manipulation
+repo-url: https://github.com/metacall/examples
+code-files:
+  - path: examples/string-manipulation/str.rb
+    test-cases:
+      - name: Check longest repetition is found correctly
+        function-call: longest_repetition("aaaabbb")
+        expected-pattern: '\["a", 4\]'
+      - name: Check empty string returns empty result
+        function-call: longest_repetition("")
+        expected-pattern: '\["", 0\]'
