@@ -23,13 +23,34 @@ def parse_arguments():
         default=["cli"],
         help="Environments to run the tests on (cli, faas).",
     )
+    parser.add_argument(
+        "--log-file",
+        help="Path to log file (default: logs/testing_center.log)",
+    )
+    parser.add_argument(
+        "--log-max-bytes",
+        type=int,
+        default=10*1024*1024,
+        help="Maximum log file size in bytes before rotation (default: 10MB)",
+    )
+    parser.add_argument(
+        "--log-backup-count",
+        type=int,
+        default=5,
+        help="Number of backup log files to keep (default: 5)",
+    )
     return parser.parse_args()
 
 
-def setup_logger(verbose):
-    """Setup logger with the appropriate logging level"""
+def setup_logger(verbose, log_file=None, log_max_bytes=None, log_backup_count=None):
+    """Setup logger with the appropriate logging level and configuration"""
     logger = Logger.get_instance()
     logger.set_level("DEBUG" if verbose else "INFO")
+    
+    # Configure logger with rotation parameters if provided
+    if log_file or log_max_bytes or log_backup_count:
+        logger.configure_from_args(log_file, log_max_bytes, log_backup_count)
+    
     return logger
 
 
@@ -70,7 +91,12 @@ def run_tests(envs, test_suites):
 
 def main():
     args = parse_arguments()
-    logger = setup_logger(args.verbose)
+    logger = setup_logger(
+        args.verbose, 
+        args.log_file, 
+        args.log_max_bytes, 
+        args.log_backup_count
+    )
 
     try:
         project_name, project_path, repo_url, test_suites = extract_test_suites(

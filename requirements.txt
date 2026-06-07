@@ -1,3 +1,4 @@
 config==0.5.1
 metacall==0.5.0
 PyYAML==6.0.2
+jsonschema==4.17.3
