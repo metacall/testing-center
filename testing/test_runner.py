@@ -18,8 +18,17 @@ class TestCaseGenerator:
             passed = self.check_match(out_str, test_case_expected_stdout)
             self.assertTrue(
                 passed,
-                f"{interface.get_name()}_{test_case_name} - \
-                Expected: {test_case_expected_stdout}, Actual: {out_str}",
+                f"""
+            Test Failed
+            
+            Interface : {interface.get_name()}
+            Test Case : {test_case_name}
+
+            Input: {function_call}
+
+            Expected  : {test_case_expected_stdout}
+            Actual: {out_str}
+            """,
             )
 
         return test_method
